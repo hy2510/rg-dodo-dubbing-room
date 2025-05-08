@@ -63,6 +63,7 @@ export function useSounds() {
 
     const handleCanPlayThrough = () => {
       loadedCount++
+
       if (loadedCount === audioElements.length) {
         setIsReady(true)
       }
@@ -72,6 +73,7 @@ export function useSounds() {
       audio.addEventListener('canplaythrough', handleCanPlayThrough, {
         once: true,
       })
+
       audio.load() // 강제 로드 시작 (ios 대응)
     })
 
@@ -88,6 +90,7 @@ export function useSounds() {
     volume = 1,
   ) => {
     const audio = ref.current
+
     if (audio) {
       audio.currentTime = startTime
       audio.volume = volume
@@ -97,6 +100,7 @@ export function useSounds() {
 
   const toggleBgMusic = () => {
     const audio = bgMusicRef.current
+
     if (audio) {
       audio.volume = audio.volume > 0 ? 0 : 0.3
     }

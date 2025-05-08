@@ -9,6 +9,7 @@ const API_KEY = 'e874641aac784ff6b9d62c3483f7aaaa'
 
 export default function useRecorder() {
   const [recFiles, setRecFiles] = useState<{ index: number; file: File }[]>([])
+  const [stream, setStream] = useState<MediaStream | null>(null)
 
   useEffect(() => {
     console.log(recFiles)
@@ -31,6 +32,7 @@ export default function useRecorder() {
 
           // user media 권한 얻기 성공
           const onSuccGetUserMedia = (stream: MediaStream) => {
+            setStream(stream)
             const recorder = new MediaRecorder(stream)
             const chunks: BlobPart[] = []
 
@@ -43,26 +45,8 @@ export default function useRecorder() {
                 track.stop()
               })
 
-              const audioBlob = new Blob(chunks, { type: recorder.mimeType })
-              const studentAudio = new File(
-                [audioBlob],
-                `userAudio${recIndex + 1}.mp3`,
-                {
-                  type: 'audio/mp3',
-                },
-              )
-
-              setRecFiles((prev) => {
-                const filtered = prev.filter((f) => f.index !== recIndex)
-                return [
-                  ...filtered,
-                  { index: recIndex, file: studentAudio },
-                ].sort((a, b) => a.index - b.index)
-              })
-
-              const audioURL = URL.createObjectURL(audioBlob)
-              const audio = new Audio(audioURL)
-              audio.play()
+              playAudioFromBlob(chunks, recorder, recIndex)
+              setStream(null)
 
               setTimeout(() => {
                 isWorking.current = false
@@ -97,7 +81,7 @@ export default function useRecorder() {
           }
 
           // user media 권한 얻기 실패
-          const onFailGetUserMedia = (err: string) => {
+          const onFailGetUserMedia = (err: unknown) => {
             console.error('The following error occured: ' + err)
 
             // to-do reset
@@ -127,5 +111,54 @@ export default function useRecorder() {
     }
   }
 
-  return { recFiles, startRecording }
+  /**
+   * 녹음 완료 후 자동으로 녹음된 파일 재생
+   * @param chunks
+   * @param recorder
+   * @param recIndex
+   */
+  const playAudioFromBlob = (
+    chunks: BlobPart[],
+    recorder: MediaRecorder,
+    recIndex: number,
+  ) => {
+    const audioBlob = new Blob(chunks, { type: recorder.mimeType })
+    const studentAudio = new File([audioBlob], `userAudio${recIndex + 1}.mp3`, {
+      type: 'audio/mp3',
+    })
+
+    setRecFiles((prev) => {
+      const filtered = prev.filter((f) => f.index !== recIndex)
+
+      return [...filtered, { index: recIndex, file: studentAudio }].sort(
+        (a, b) => a.index - b.index,
+      )
+    })
+
+    const audioURL = URL.createObjectURL(audioBlob)
+    const audio = new Audio(audioURL)
+
+    audio.play()
+  }
+
+  /**
+   * 녹음된 파일 유저가 재생
+   * @param index
+   */
+  const playAudioFromRecFile = (index: number) => {
+    const recFile = recFiles.find((f) => f.index === index)
+
+    if (recFile) {
+      const audioFile = recFile.file
+      const url = URL.createObjectURL(audioFile)
+
+      const audio = new Audio(url)
+
+      audio.play()
+    } else {
+      alert('녹음을 진행해주세요.')
+    }
+  }
+
+  return { recFiles, stream, startRecording, playAudioFromRecFile }
 }

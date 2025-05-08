@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react-swc'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import mkcert from 'vite-plugin-mkcert'
 import { resolve } from 'path'
+import svgr from '@svgr/rollup'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -53,6 +54,7 @@ export default defineConfig({
       savePath: './certs', // save the generated certificate into certs directory
       force: true, // force generation of certs even without setting https property in the vite config
     }),
+    svgr(),
   ],
   optimizeDeps: {
     exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],

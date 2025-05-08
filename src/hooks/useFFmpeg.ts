@@ -48,15 +48,7 @@ export default function useFFmpeg() {
         }
 
         // 동영상에서 오디오 분리
-        await ffmpeg.exec([
-          '-i',
-          'video.mp4',
-          '-q:a',
-          '0',
-          '-map',
-          'a',
-          'audio.mp3',
-        ])
+        await splitAudio()
 
         // 음원 특정 구간 자르기
         for (let i = 0; i < timeStampArr.length; i++) {
@@ -99,6 +91,21 @@ export default function useFFmpeg() {
     } finally {
       ffmpeg.terminate()
     }
+  }
+
+  /**
+   * 비디오와 음원 분리
+   */
+  const splitAudio = async () => {
+    await ffmpeg.exec([
+      '-i',
+      'video.mp4',
+      '-q:a',
+      '0',
+      '-map',
+      'a',
+      'audio.mp3',
+    ])
   }
 
   /**
