@@ -3,6 +3,15 @@ import styled from 'styled-components'
 
 import { MainView } from 'src/App'
 
+import {
+  imgBtnTabLevelA,
+  imgBtnTabLevelAOn,
+  imgBtnTabLevelB,
+  imgBtnTabLevelBOn,
+  imgBtnTabLevelC,
+  imgBtnTabLevelCOn,
+} from '@utils/Assets'
+
 import { StyledTabBar } from '@components/main/TabBar'
 import { StyledTags } from '@components/main/Tags'
 import { StyledListBoard } from '@components/main/ListBoard'
@@ -30,9 +39,31 @@ export default function ContentsList({
 
   const renderTabItem = (level: LevelList) => {
     const isActive = currentTabView === level
-    const imageSrc = `src/assets/images/common/btn-tab-${level}${
-      isActive ? '_on' : ''
-    }.png`
+    let imageComponent
+
+    switch (level) {
+      case 'level_a':
+        imageComponent = isActive ? (
+          <img src={imgBtnTabLevelAOn} />
+        ) : (
+          <img src={imgBtnTabLevelA} />
+        )
+        break
+      case 'level_b':
+        imageComponent = isActive ? (
+          <img src={imgBtnTabLevelBOn} />
+        ) : (
+          <img src={imgBtnTabLevelB} />
+        )
+        break
+      case 'level_c':
+        imageComponent = isActive ? (
+          <img src={imgBtnTabLevelCOn} />
+        ) : (
+          <img src={imgBtnTabLevelC} />
+        )
+        break
+    }
 
     return (
       <div
@@ -40,7 +71,7 @@ export default function ContentsList({
         className="tab-menu-item"
         onClick={() => !isActive && setCurrentTabView(level)}
       >
-        <img src={imageSrc} alt={level} />
+        {imageComponent}
       </div>
     )
   }

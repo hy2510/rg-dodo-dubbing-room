@@ -1,6 +1,13 @@
 import { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 
+import sndGiggle from '@assets/sounds/bg-cosmic-giggle-odyssey.mp3'
+import sndShowUp from '@assets/sounds/res-show_up.mp3'
+import sndLaunch from '@assets/sounds/res-launch_sound.mp3'
+import sndHiThere from '@assets/sounds/res-hi_captain_voice.mp3'
+import sndMenuTab from '@assets/sounds/btn-menu_tap.mp3'
+import sndClose from '@assets/sounds/btn-close.mp3'
+
 interface SoundItem {
   ref: React.RefObject<HTMLAudioElement>
   src: string
@@ -19,33 +26,33 @@ export function useSounds() {
   const sounds: Record<string, SoundItem> = {
     bgMusic: {
       ref: bgMusicRef,
-      src: 'src/assets/sounds/bg-cosmic-giggle-odyssey.mp3',
+      src: sndGiggle,
       loop: true,
       preload: 'auto',
     },
     showUpSound: {
       ref: showUpSoundRef,
-      src: 'src/assets/sounds/res-show_up.mp3',
+      src: sndShowUp,
       preload: 'auto',
     },
     launchSound: {
       ref: launchSoundRef,
-      src: 'src/assets/sounds/res-launch_sound.mp3',
+      src: sndLaunch,
       preload: 'auto',
     },
     hiThereVoice: {
       ref: hiThereVoiceRef,
-      src: 'src/assets/sounds/res-hi_captain_voice.mp3',
+      src: sndHiThere,
       preload: 'auto',
     },
     menuTapSound: {
       ref: menuTapSoundRef,
-      src: 'src/assets/sounds/btn-menu_tap.mp3',
+      src: sndMenuTab,
       preload: 'auto',
     },
     closeTapSound: {
       ref: closeTapSoundRef,
-      src: 'src/assets/sounds/btn-close.mp3',
+      src: sndClose,
       preload: 'auto',
     },
   }

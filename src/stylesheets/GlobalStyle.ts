@@ -1,9 +1,12 @@
 import { createGlobalStyle } from 'styled-components'
 
+// font
+import SDGdGulimTTF from '@assets/fonts/SDGdGulimTTF.ttf'
+
 const RoundedFont = createGlobalStyle`
   @font-face {
     font-family: 'SDGdGulim';
-    src: url('src/assets/fonts/SDGdGulimTTF.ttf') format('truetype');
+    src: url(${SDGdGulimTTF}) format('truetype');
     font-style: normal;
     font-weight: normal;
   }

@@ -1,6 +1,13 @@
 import styled from 'styled-components'
 import 'animate.css'
+
+import {
+  resContentsListHeaderLine,
+  iconPointMark,
+  resSingDodo,
+} from '@utils/Assets'
 import { RoundedFont } from '@stylesheets/GlobalStyle'
+
 import BtnBackTitle from '@components/BtnBackTitle'
 
 type FrameListHeaderProps = {
@@ -42,7 +49,7 @@ const StyledListHeader = styled.div`
     bottom: 0;
     width: 100%;
     height: 100%;
-    background-image: url('src/assets/images/common/res-contents_list_header_line.png');
+    background-image: url(${resContentsListHeaderLine});
     background-position: center;
     background-size: contain;
     z-index: 2;
@@ -83,7 +90,7 @@ const StyledPointsDisplay = styled.div`
     content: '';
     width: 50px;
     height: 50px;
-    background-image: url('src/assets/images/common/ico-point_mark.png');
+    background-image: url(${iconPointMark});
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -96,7 +103,7 @@ const StyledDodoSing = styled.div`
   bottom: -10px;
   width: 418.74px;
   height: 196.02px;
-  background-image: url('src/assets/images/common/res-sing_dodo.png');
+  background-image: url(${resSingDodo});
   background-size: 100%;
   background-repeat: no-repeat;
   z-index: 1;

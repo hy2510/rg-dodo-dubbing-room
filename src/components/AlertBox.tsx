@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+import {
+  bgAlertBox,
+  imgBtnAlertBoxLeft,
+  imgBtnAlertBoxRight,
+} from '@utils/Assets'
+
 type AlertBoxProps = {
   message?: string
   onClickCancel?: () => void
@@ -47,7 +53,7 @@ const StyledAlertBox = styled.div`
   .alert-container {
     width: 560px;
     height: 305px;
-    background-image: url('src/assets/images/common/bg-alert_box.png');
+    background-image: url(${bgAlertBox});
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -89,10 +95,10 @@ const StyledAlertBox = styled.div`
         }
       }
       .btn-left {
-        background-image: url('src/assets/images/common/btn-alert_box_left_button.png');
+        background-image: url(${imgBtnAlertBoxLeft});
       }
       .btn-right {
-        background-image: url('src/assets/images/common/btn-alert_box_right_button.png');
+        background-image: url(${imgBtnAlertBoxRight});
       }
     }
   }

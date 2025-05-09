@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { bgModalResult, imgBtnBasicBlue, imgBtnBasicRed } from '@utils/Assets'
+
 type ModalDubResultProps = {
   videoUrl: string
   onClickTryAgain: () => void
@@ -51,7 +53,7 @@ const StyledDubResult = styled.div`
   .modal-container {
     width: 793px;
     height: 633px;
-    background-image: url('src/assets/images/dubbing/bg-result_modal.png');
+    background-image: url(${bgModalResult});
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -77,7 +79,7 @@ const StyledDubResult = styled.div`
         cursor: pointer;
         width: 210px;
         height: 76px;
-        background-image: url('src/assets/images/dubbing/btn-red_basic.png');
+        background-image: url(${imgBtnBasicRed});
         background-size: 100%;
         background-position: center;
         background-repeat: no-repeat;
@@ -95,7 +97,7 @@ const StyledDubResult = styled.div`
         cursor: pointer;
         width: 210px;
         height: 76px;
-        background-image: url('src/assets/images/dubbing/btn-blue_basic.png');
+        background-image: url(${imgBtnBasicBlue});
         background-size: 100%;
         background-position: center;
         background-repeat: no-repeat;

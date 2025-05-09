@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+import {
+  bgModalGuide,
+  imgBtnCloseModal,
+  imgBtnCloseModalAct,
+} from '@utils/Assets'
+
 type ModalGuideProps = {
   onClickClose: () => void
   videoUrl: string
@@ -31,7 +37,7 @@ const StyledGuideModal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
-  background-image: url('src/assets/images/home/bg-guide_modal.png');
+  background-image: url(${bgModalGuide});
   background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -44,12 +50,12 @@ const StyledGuideModal = styled.div`
     position: absolute;
     top: 0;
     right: -10px;
-    background-image: url('src/assets/images/home/btn-close_modal.png');
+    background-image: url(${imgBtnCloseModal});
     background-size: 70px;
     background-repeat: no-repeat;
 
     &:active {
-      background-image: url('src/assets/images/home/btn-close_modal-act.png');
+      background-image: url(${imgBtnCloseModalAct});
     }
   }
 

@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import {
+  bgModalTotalScore,
+  imgBtnCloseModal,
+  imgBtnCloseModalAct,
+  imgBtnFinish,
+} from '@utils/Assets'
+
+import tempVideo from '@assets/movies/70101001.mp4'
+import imgGraph from '@assets/images/common/sample-pentagon_graph.png'
 
 type ModalTotalScoreProps = {
   dubDate?: string
@@ -38,13 +47,7 @@ export default function ModalTotalScore({
         <div className="col-left">
           <div className="dub-info">
             <div className="row-1st">
-              <video
-                src="src/assets/movies/70101001.mp4"
-                playsInline
-                autoPlay
-                loop
-                controls
-              />
+              <video src={tempVideo} playsInline autoPlay loop controls />
             </div>
             <div className="row-2nd">
               <div>더빙날짜</div>
@@ -76,12 +79,7 @@ export default function ModalTotalScore({
           </div>
           <div className="row-3rd">
             {/* 여기에 펜타곤 그래프 삽입 */}
-            <img
-              src="src/assets/images/common/sample-pentagon_graph.png"
-              alt=""
-              width={'auto'}
-              height={'300px'}
-            />
+            <img src={imgGraph} alt="" width={'auto'} height={'300px'} />
           </div>
         </div>
         {isReview ? (
@@ -113,7 +111,7 @@ const StyledModalTotalScore = styled.div`
   .modal-container {
     width: 1170px;
     height: 630px;
-    background-image: url('src/assets/images/common/bg-total_score_modal.png');
+    background-image: url(${bgModalTotalScore});
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -220,11 +218,10 @@ const StyledCloseButton = styled.div`
   right: -15px;
   width: 70px;
   height: 70px;
-  background: url('src/assets/images/home/btn-close_modal.png') center / 70px
-    no-repeat;
+  background: url(${imgBtnCloseModal}) center / 70px no-repeat;
 
   &:active {
-    background-image: url('src/assets/images/home/btn-close_modal-act.png');
+    background-image: url(${imgBtnCloseModalAct});
   }
 `
 
@@ -232,7 +229,7 @@ const StyledFinishButton = styled.div`
   cursor: pointer;
   width: 238px;
   height: 73px;
-  background-image: url('src/assets/images/common/btn-finish.png');
+  background-image: url(${imgBtnFinish});
   background-size: 100%;
   background-repeat: no-repeat;
   position: absolute;

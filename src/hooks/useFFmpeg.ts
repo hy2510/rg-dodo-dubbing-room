@@ -1,17 +1,21 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
-import { convertTimeToSec, formatTime } from 'src/utils/common'
+import { convertTimeToSec, formatTime } from '@utils/common'
 
 const BASE_URL = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm'
 
 export default function useFFmpeg() {
   const [outputFile, setOutputFile] = useState('')
+  const [partFile, setPartFile] = useState<File | null>(null)
 
   const ffmpegRef = useRef(new FFmpeg())
   const ffmpeg = ffmpegRef.current
 
+  /**
+   * ffmpeg 로드
+   */
   const loadFFmpeg = async () => {
     await ffmpeg.load({
       coreURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.js`, 'text/javascript'),
@@ -22,6 +26,12 @@ export default function useFFmpeg() {
     })
   }
 
+  /**
+   * 유저 동영상 만들기
+   * @param videoPath
+   * @param recFiles
+   * @param timeStampArr
+   */
   const trans = async (
     videoPath: string,
     recFiles: {
@@ -94,7 +104,44 @@ export default function useFFmpeg() {
   }
 
   /**
-   * 비디오와 음원 분리
+   * 비디오에서 부분 음원 얻기
+   * @param videoPath
+   */
+  const getPartFile = async (videoPath: string, start: string, end: string) => {
+    try {
+      await loadFFmpeg()
+
+      if (ffmpeg.loaded) {
+        // 파일 로드
+        await ffmpeg.writeFile('video.mp4', await fetchFile(videoPath))
+
+        // 오디오와 비디오 분리
+        await splitAudio()
+
+        //
+        await sliceAudio(start, end, `part.mp3`)
+
+        const data = await ffmpeg.readFile('part.mp3')
+        // @ts-ignore
+        const file = new File([data.buffer], 'part.mp3', {
+          type: 'audio/mp3',
+        })
+
+        setPartFile(file)
+
+        await ffmpeg.deleteFile('video.mp4')
+        await ffmpeg.deleteFile('audio.mp3')
+        await ffmpeg.deleteFile('part.mp3')
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      ffmpeg.terminate()
+    }
+  }
+
+  /**
+   * 비디오와 음원 분리(mp3)
    */
   const splitAudio = async () => {
     await ffmpeg.exec([
@@ -199,5 +246,5 @@ export default function useFFmpeg() {
     return match ? match[0] : '.webm' // fallback 확장자
   }
 
-  return { outputFile, loadFFmpeg, trans }
+  return { outputFile, partFile, trans, getPartFile }
 }

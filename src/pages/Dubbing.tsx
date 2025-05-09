@@ -1,19 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { convertTimeToSec } from 'src/utils/common'
+import {
+  imgBtnRec,
+  imgBtnPlay,
+  imgBtnRight,
+  imgBtnSave,
+  bgGraphArea,
+  imgBtnLeft,
+} from '@utils/Assets'
+
+import { convertTimeToSec } from '@utils/common'
 
 import { SpeakMode } from './containers/DubbingContainer'
 
 import useFFmpeg from '@hooks/useFFmpeg'
 import useRecorder from '@hooks/useRecorder'
 
+import { StyledSpeechBubble } from '@components/dubbing/SpeechBubble'
+
 import Video from '@components/dubbing/Video'
 import Visualizer from '@components/dubbing/Visualizer'
 import LiveVisualizer from '@components/dubbing/LiveVisualizer'
 import AlertBox from '@components/AlertBox'
 import ModalTotalScore from '@components/modals/ModalTotalScore'
-import { StyledSpeechBubble } from '@components/dubbing/SpeechBubble'
 
 type DubbingProps = {
   mode: SpeakMode
@@ -43,14 +53,29 @@ export default function Dubbing({ mode }: DubbingProps) {
     endTime: 0,
   })
 
-  const { recFiles, stream, startRecording, playAudioFromRecFile } =
-    useRecorder()
-  const { outputFile, trans } = useFFmpeg()
+  const { recFiles, stream, startRecording } = useRecorder()
+  const { outputFile, partFile, trans, getPartFile } = useFFmpeg()
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const [recIndex, setRecIndex] = useState(0)
 
   const [showModalTotalScore, setShowModalTotalScore] = useState<boolean>(false)
+
+  useEffect(() => {
+    getPartFile(
+      videoPath,
+      timeStampArr[recIndex].start,
+      timeStampArr[recIndex].end,
+    )
+  }, [])
+
+  useEffect(() => {
+    getPartFile(
+      videoPath,
+      timeStampArr[recIndex].start,
+      timeStampArr[recIndex].end,
+    )
+  }, [recIndex])
 
   useEffect(() => {
     if (audioRef.current) {
@@ -120,7 +145,7 @@ export default function Dubbing({ mode }: DubbingProps) {
       <StyledDubStudio>
         <div className="row-1st">
           <div className="graph-area">
-            {stream ? (
+            {stream && (
               <LiveVisualizer
                 stream={stream}
                 durationInSeconds={
@@ -128,14 +153,9 @@ export default function Dubbing({ mode }: DubbingProps) {
                   convertTimeToSec(timeStampArr[recIndex].start)
                 }
               />
-            ) : (
-              <Visualizer
-                audioFile={
-                  recFiles.find((f) => f.index === recIndex)?.file || null
-                }
-                color={'#fff'}
-              />
             )}
+
+            <Visualizer audioFile={partFile} color={'#fff'} />
           </div>
           <div className="dubbing-control-area">
             <div className="col-left">
@@ -146,30 +166,37 @@ export default function Dubbing({ mode }: DubbingProps) {
                   startRecord()
                 }}
               >
-                <img src="src/assets/images/dubbing/btn-rec.png" alt="" />
+                <img src={imgBtnRec} alt="" />
               </div>
 
               {/* 녹음된 문장 재생 */}
               <div className="btn-play">
-                <img src="src/assets/images/dubbing/btn-play.png" alt="" />
+                <img src={imgBtnPlay} alt="" />
               </div>
             </div>
 
             <div className="col-center">
               {/* 이전 문장 보기 버튼 */}
-              <div className="btn-chev-left">
-                <img src="src/assets/images/dubbing/btn-chev_left.svg" alt="" />
+              <div
+                className="btn-chev-left"
+                onClick={() => {
+                  setRecIndex(recIndex - 1)
+                }}
+              >
+                <img src={imgBtnLeft} alt="" />
               </div>
 
               {/* 현재 문장 */}
               <div className="sentence">{timeStampArr[recIndex].text}</div>
 
               {/* 다음 문장 보기 버튼 */}
-              <div className="btn-chev-right">
-                <img
-                  src="src/assets/images/dubbing/btn-chev_right.png"
-                  alt=""
-                />
+              <div
+                className="btn-chev-right"
+                onClick={() => {
+                  setRecIndex(recIndex + 1)
+                }}
+              >
+                <img src={imgBtnRight} alt="" />
               </div>
             </div>
 
@@ -181,7 +208,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                   // setShowDubResult(true)
                 }}
               >
-                <img src="src/assets/images/dubbing/btn-save.png" alt="" />
+                <img src={imgBtnSave} alt="" />
               </div>
             </div>
           </div>
@@ -257,7 +284,7 @@ const StyledDubStudio = styled.div`
   .row-1st {
     width: 100%;
     height: 334px;
-    background-image: url('src/assets/images/dubbing/bg-graph_area.png');
+    background-image: url(${bgGraphArea});
     background-size: 100%;
     background-position: top;
     background-repeat: no-repeat;

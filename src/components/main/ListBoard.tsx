@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { iconSingleMode, iconFullMode } from '@utils/Assets'
+
 export const StyledListBoard = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -43,7 +45,7 @@ export const StyledListBoard = styled.div`
       .single-mark {
         width: 60px;
         height: 60px;
-        background-image: url('src/assets/images/home/res-ico-single_mode.png');
+        background-image: url(${iconSingleMode});
         background-size: auto 100%;
         background-position: center;
         background-repeat: no-repeat;
@@ -54,7 +56,7 @@ export const StyledListBoard = styled.div`
       .full-mark {
         width: 60px;
         height: 60px;
-        background-image: url('src/assets/images/home/res-ico-full_cast_mode.png');
+        background-image: url(${iconFullMode});
         background-size: auto 100%;
         background-position: center;
         background-repeat: no-repeat;

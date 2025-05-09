@@ -1,5 +1,20 @@
 import styled from 'styled-components'
 
+import {
+  resRotatingSign,
+  resMixingConsole,
+  resDodo,
+  resSynth,
+  resPlatformRing,
+  imgBtnGuide,
+  imgBtnGuideAct,
+  imgBtnStart,
+  imgBtnStartAct,
+  imgBtnMyRoom,
+  imgBtnMyRoomAct,
+  resPlatform,
+} from '@utils/Assets'
+
 type IntroProps = {
   onGuideClick: () => void
   onStartClick: () => void
@@ -22,32 +37,16 @@ export default function Intro({
   return (
     <StyledIntro>
       <div className="rotating-sign">
-        <object
-          type="image/svg+xml"
-          data="src/assets/images/home/res-rotating_sign.svg"
-          width="100%"
-        />
+        <object type="image/svg+xml" data={resRotatingSign} width="100%" />
       </div>
       <div className="mixing-console">
-        <object
-          type="image/svg+xml"
-          data="src/assets/images/home/res-mixing_console.svg"
-          width="100%"
-        />
+        <object type="image/svg+xml" data={resMixingConsole} width="100%" />
       </div>
       <div className="dodo">
-        <object
-          type="image/svg+xml"
-          data="src/assets/images/home/res-dodo.svg"
-          width="100%"
-        />
+        <object type="image/svg+xml" data={resDodo} width="100%" />
       </div>
       <div className="synth">
-        <object
-          type="image/svg+xml"
-          data="src/assets/images/home/res-synth.svg"
-          width="100%"
-        />
+        <object type="image/svg+xml" data={resSynth} width="100%" />
       </div>
       <div
         className="btn-guide"
@@ -72,11 +71,7 @@ export default function Intro({
       />
       <div className="platform">
         <div className="platform-ring">
-          <object
-            type="image/svg+xml"
-            data="src/assets/images/home/res-platform_ring.svg"
-            width="100%"
-          />
+          <object type="image/svg+xml" data={resPlatformRing} width="100%" />
         </div>
       </div>
     </StyledIntro>
@@ -108,7 +103,6 @@ const StyledIntro = styled.div`
     left: 418px;
     width: 439px;
     height: 205px;
-    /* background-image: url('src/assets/images/home/res-rotating_sign.png'); */
     z-index: 2;
   }
 
@@ -117,7 +111,6 @@ const StyledIntro = styled.div`
     bottom: 222px;
     width: 286.05px;
     height: 90.69px;
-    /* background-image: url('src/assets/images/home/res-mixing_console.png'); */
     z-index: 1;
   }
 
@@ -134,7 +127,6 @@ const StyledIntro = styled.div`
     bottom: 215px;
     width: 352.42px;
     height: 101.93px;
-    /* background-image: url('src/assets/images/home/res-synth.png'); */
     z-index: 1;
   }
 
@@ -151,9 +143,9 @@ const StyledIntro = styled.div`
     bottom: 77px;
     width: 165.5px;
     height: 112px;
-    background-image: url('src/assets/images/home/btn-guide.png');
+    background-image: url(${imgBtnGuide});
     &:active {
-      background-image: url('src/assets/images/home/btn-guide-act.png');
+      background-image: url(${imgBtnGuideAct});
     }
   }
 
@@ -162,9 +154,9 @@ const StyledIntro = styled.div`
     bottom: 65px;
     width: 226px;
     height: 136px;
-    background-image: url('src/assets/images/home/btn-start.png');
+    background-image: url(${imgBtnStart});
     &:active {
-      background-image: url('src/assets/images/home/btn-start-act.png');
+      background-image: url(${imgBtnStartAct});
     }
   }
 
@@ -173,9 +165,9 @@ const StyledIntro = styled.div`
     bottom: 66px;
     width: 168px;
     height: 136px;
-    background-image: url('src/assets/images/home/btn-my_movies.png');
+    background-image: url(${imgBtnMyRoom});
     &:active {
-      background-image: url('src/assets/images/home/btn-my_movies-act.png');
+      background-image: url(${imgBtnMyRoomAct});
     }
   }
 
@@ -184,7 +176,7 @@ const StyledIntro = styled.div`
     bottom: 45px;
     width: 555px;
     height: 221px;
-    background-image: url('src/assets/images/home/res-platform.png');
+    background-image: url(${resPlatform});
     z-index: 1;
 
     .platform-ring {

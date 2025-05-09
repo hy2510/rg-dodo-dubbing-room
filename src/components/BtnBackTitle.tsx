@@ -1,5 +1,8 @@
-import { RoundedFont } from '@stylesheets/GlobalStyle'
 import styled from 'styled-components'
+
+import { imgBtnArrowRight } from '@utils/Assets'
+
+import { RoundedFont } from '@stylesheets/GlobalStyle'
 
 type BtnBackTitleProps = {
   title?: string
@@ -7,6 +10,7 @@ type BtnBackTitleProps = {
 }
 
 export default function BtnBackTitle({ title, onClick }: BtnBackTitleProps) {
+  console.log(imgBtnArrowRight)
   return (
     <StyledBtnBackTitle onClick={onClick}>
       <RoundedFont />
@@ -29,7 +33,7 @@ const StyledBtnBackTitle = styled.div`
   display: flex;
   align-items: center;
   padding-left: calc(34px + 10px);
-  background-image: url('src/assets/images/common/btn-arrow_right.svg');
+  background-image: url(${'"' + imgBtnArrowRight + '"'});
   background-size: auto 100%;
   background-repeat: no-repeat;
   position: absolute;

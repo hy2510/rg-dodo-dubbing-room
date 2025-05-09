@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 
+import { bgMain } from '@utils/Assets'
+
+import tempVideo from '@assets/movies/70101001.mp4'
+
 import { useSounds } from '@hooks/useSounds'
 
 import { MainView, MainSubView } from 'src/App'
@@ -42,7 +46,7 @@ export default function MainContainer({
     if (isScreenLock || viewRocket) {
       setBgImageUrl('')
     } else {
-      setBgImageUrl('src/assets/images/home/bg-main.png')
+      setBgImageUrl(bgMain)
     }
   }, [viewRocket])
 
@@ -130,7 +134,7 @@ export default function MainContainer({
 
         {viewGuideModal && (
           <ModalGuide
-            videoUrl="src/assets/movies/70101001.mp4"
+            videoUrl={tempVideo}
             onClickClose={() => {
               playSound(refs.closeTapSoundRef)
 

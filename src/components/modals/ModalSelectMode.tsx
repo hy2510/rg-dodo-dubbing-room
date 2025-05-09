@@ -1,5 +1,13 @@
-import { SpeakMode } from '@pages/containers/DubbingContainer'
 import styled, { css } from 'styled-components'
+
+import {
+  bgModalSelect,
+  imgBtnCloseModal,
+  imgBtnCloseModalAct,
+  imgBtnFullMode,
+  imgBtnSingleMode,
+} from '@utils/Assets'
+import { SpeakMode } from '@pages/containers/DubbingContainer'
 
 type ModalSelectModeProps = {
   selectSpeakMode: (mode: SpeakMode) => void
@@ -15,11 +23,11 @@ export default function ModalSelectMode({
       <div className="modal-container">
         <div className="buttons">
           <StyledModeButton
-            image="src/assets/images/dubbing/btn-single_mode.png"
+            image={imgBtnSingleMode}
             onClick={() => selectSpeakMode('single')}
           />
           <StyledModeButton
-            image="src/assets/images/dubbing/btn-full_cast_mode.png"
+            image={imgBtnFullMode}
             onClick={() => selectSpeakMode('full')}
           />
         </div>
@@ -57,8 +65,7 @@ const StyledModalSelectMode = styled.div`
     position: relative;
     width: 793px;
     height: 553px;
-    background: url('src/assets/images/dubbing/bg-select_mode_modal.png') center /
-      100% no-repeat;
+    background: url(${bgModalSelect}) center / 100% no-repeat;
   }
 
   .buttons {
@@ -86,10 +93,9 @@ const StyledCloseButton = styled.div`
   right: -10px;
   width: 70px;
   height: 70px;
-  background: url('src/assets/images/home/btn-close_modal.png') center / 70px
-    no-repeat;
+  background: url(${imgBtnCloseModal}) center / 70px no-repeat;
 
   &:active {
-    background-image: url('src/assets/images/home/btn-close_modal-act.png');
+    background-image: url(${imgBtnCloseModalAct});
   }
 `

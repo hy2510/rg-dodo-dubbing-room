@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import axios from 'axios'
 
-import { convertTimeToSec } from 'src/utils/common'
+import { convertTimeToSec } from '@utils/common'
 
 const API_URL = 'https://api.readinggate.elasolution.com'
 const API_KEY = 'e874641aac784ff6b9d62c3483f7aaaa'

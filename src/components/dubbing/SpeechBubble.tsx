@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+import {
+  resBubbleTailReady,
+  resBubbleTailHighlight,
+  resBubbleTailHold,
+} from '@utils/Assets'
+
 export const StyledSpeechBubble = styled.div`
   display: flex;
   align-items: center;
@@ -32,8 +38,7 @@ export const StyledSpeechBubble = styled.div`
       left: -8px;
       width: 19px;
       height: 14px;
-      background: url('src/assets/images/dubbing/res-bubble_tail_ready.svg')
-        center / 100% no-repeat;
+      background: url(${resBubbleTailReady}) center / 100% no-repeat;
     }
   }
 
@@ -45,7 +50,7 @@ export const StyledSpeechBubble = styled.div`
 
     .text-box {
       &::after {
-        background-image: url('src/assets/images/dubbing/res-bubble_tail_highlight.svg');
+        background-image: url(${resBubbleTailHighlight});
       }
     }
   }
@@ -56,7 +61,7 @@ export const StyledSpeechBubble = styled.div`
       color: rgba(255, 255, 255, 0.5);
 
       &::after {
-        background-image: url('src/assets/images/dubbing/res-bubble_tail_hold.svg');
+        background-image: url(${resBubbleTailHold});
       }
     }
   }

@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { resFlyingRocket } from '@utils/Assets'
+
 import BtnBoom from '@components/BtnBoom'
 
 type LauncherProps = {
@@ -26,11 +28,7 @@ export default function Launcher({
           className={popOut ? 'pop-out' : 'res-rocket-ani'}
           onClick={onRocketClick}
         >
-          <img
-            src="src/assets/images/home/res-flying_rocket.svg"
-            alt=""
-            width={250}
-          />
+          <img src={resFlyingRocket} alt="" width={250} />
         </BtnBoom>
       </div>
     </StyledLauncherBox>
