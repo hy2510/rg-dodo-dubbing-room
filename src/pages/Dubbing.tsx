@@ -166,12 +166,12 @@ export default function Dubbing({ mode }: DubbingProps) {
                   startRecord()
                 }}
               >
-                <img src={imgBtnRec} alt="" />
+                <img src={imgBtnRec} alt="" draggable="false" />
               </div>
 
               {/* 녹음된 문장 재생 */}
               <div className="btn-play">
-                <img src={imgBtnPlay} alt="" />
+                <img src={imgBtnPlay} alt="" draggable="false" />
               </div>
             </div>
 
@@ -183,7 +183,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                   setRecIndex(recIndex - 1)
                 }}
               >
-                <img src={imgBtnLeft} alt="" />
+                <img src={imgBtnLeft} alt="" draggable="false" />
               </div>
 
               {/* 현재 문장 */}
@@ -196,7 +196,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                   setRecIndex(recIndex + 1)
                 }}
               >
-                <img src={imgBtnRight} alt="" />
+                <img src={imgBtnRight} alt="" draggable="false" />
               </div>
             </div>
 
@@ -208,7 +208,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                   // setShowDubResult(true)
                 }}
               >
-                <img src={imgBtnSave} alt="" />
+                <img src={imgBtnSave} alt="" draggable="false" />
               </div>
             </div>
           </div>
@@ -232,6 +232,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                       .split(' ')[0]
                       .toLowerCase()}1.png`}
                     alt=""
+                    draggable="false"
                   />
                 </div>
                 <div
@@ -263,6 +264,7 @@ export default function Dubbing({ mode }: DubbingProps) {
           dubSentence={30}
           dubWords={10}
           checkIsReview={false}
+          thumbnail="src/assets/images/thumbnail/level_a/70100002.jpg"
         />
       )}
     </>

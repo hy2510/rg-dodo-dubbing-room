@@ -5,6 +5,8 @@ import {
   resContentsListHeaderLine,
   iconPointMark,
   resSingDodo,
+  resSingDodoAni,
+  resWatchDodoAni,
 } from '@utils/Assets'
 import { RoundedFont } from '@stylesheets/GlobalStyle'
 
@@ -14,19 +16,27 @@ type FrameListHeaderProps = {
   title?: string
   point?: number
   onClick?: () => void
+  theme?: 'content' | 'movie'
 }
 
 export default function FrameListHeader({
   title,
   point,
   onClick,
+  theme,
 }: FrameListHeaderProps) {
   return (
     <StyledListHeader>
       <RoundedFont />
       <StyledPointsDisplay>{point ? point : 0}</StyledPointsDisplay>
       <BtnBackTitle title={title} onClick={onClick} />
-      <StyledDodoSing />
+      <StyledDodoSing>
+        {theme === 'content' ? (
+          <object data={resSingDodoAni} type="image/svg+xml" width="100%" />
+        ) : (
+          <object data={resWatchDodoAni} type="image/svg+xml" width="100%" />
+        )}
+      </StyledDodoSing>
     </StyledListHeader>
   )
 }
@@ -103,7 +113,7 @@ const StyledDodoSing = styled.div`
   bottom: -10px;
   width: 418.74px;
   height: 196.02px;
-  background-image: url(${resSingDodo});
+  /* background-image: url(${resSingDodo}); */
   background-size: 100%;
   background-repeat: no-repeat;
   z-index: 1;
