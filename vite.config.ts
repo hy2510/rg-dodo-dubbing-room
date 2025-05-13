@@ -46,14 +46,6 @@ export default defineConfig({
     hmr: {
       clientPort: 3030,
     },
-    cors: true,
-    proxy: {
-      '/video': {
-        target: 'https://wcfresource.a1edu.com/newsystem/aistudio',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/video/, ''),
-      },
-    },
   },
   plugins: [
     react(),

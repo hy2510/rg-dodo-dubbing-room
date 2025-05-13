@@ -42,12 +42,6 @@ export const StyledListBoard = styled.div`
         display: none;
       }
 
-      &.review {
-        &::after {
-          background-color: transparent;
-        }
-      }
-
       .single-mark {
         width: 60px;
         height: 60px;

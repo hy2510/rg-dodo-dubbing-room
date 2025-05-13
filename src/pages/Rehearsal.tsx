@@ -63,7 +63,6 @@ export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
                   <img
                     src={`src/assets/images/character/${imgSrc}.png`}
                     alt=""
-                    draggable="false"
                   />
                 </div>
                 <div className="text-box">{text}</div>

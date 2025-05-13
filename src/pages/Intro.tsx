@@ -1,4 +1,3 @@
-import { useSoundsContext } from '@contexts/SoundsContext'
 import styled from 'styled-components'
 
 import {
@@ -20,23 +19,23 @@ type IntroProps = {
   onGuideClick: () => void
   onStartClick: () => void
   onMyMovieClick: () => void
+  playSound: (
+    ref: React.RefObject<HTMLAudioElement>,
+    startTime?: number,
+    volume?: number,
+  ) => void
+  menuTapSoundRef: React.RefObject<HTMLAudioElement>
 }
 
 export default function Intro({
   onGuideClick,
   onStartClick,
   onMyMovieClick,
+  playSound,
+  menuTapSoundRef,
 }: IntroProps) {
-  const { playSound, refs, toggleBgMusic } = useSoundsContext()
-
   return (
     <StyledIntro>
-      <div className="intro-header">
-        <div className="btn-exit">나가기</div>
-        <div className="btn-mute" onClick={toggleBgMusic}>
-          뮤트
-        </div>
-      </div>
       <div className="rotating-sign">
         <object type="image/svg+xml" data={resRotatingSign} width="100%" />
       </div>
@@ -52,22 +51,21 @@ export default function Intro({
       <div
         className="btn-guide"
         onClick={() => {
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
-          toggleBgMusic()
+          playSound(menuTapSoundRef, 0.25, 0.8)
           setTimeout(onGuideClick, 300)
         }}
       />
       <div
         className="btn-start"
         onClick={() => {
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
+          playSound(menuTapSoundRef, 0.25, 0.8)
           onStartClick()
         }}
       />
       <div
         className="btn-my-movie"
         onClick={() => {
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
+          playSound(menuTapSoundRef, 0.25, 0.8)
           onMyMovieClick()
         }}
       />

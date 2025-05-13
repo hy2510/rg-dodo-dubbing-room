@@ -1,10 +1,10 @@
-import { useSoundsContext } from '@contexts/SoundsContext'
-
 import { useEffect, useState } from 'react'
 
 import { bgMain } from '@utils/Assets'
 
 import tempVideo from '@assets/movies/70101001.mp4'
+
+import { useSounds } from '@hooks/useSounds'
 
 import { MainView, MainSubView } from 'src/App'
 
@@ -16,7 +16,6 @@ import Intro from '@pages/Intro'
 import FrameBody from '@components/FrameBody'
 import ContentsList from '@pages/ContentsList'
 import ModalGuide from '@components/modals/ModalGuide'
-import MyMovies from '@pages/MyMovies'
 
 type MainContainerProps = {
   isScreenLock: boolean
@@ -40,15 +39,25 @@ export default function MainContainer({
   const [popOut, setPopOut] = useState(false)
   const [viewGuideModal, setViewGuideModal] = useState(false)
 
-  const { playSound, toggleBgMusic, refs } = useSoundsContext()
-
   useEffect(() => {
+    // playSound(refs.bgMusicRef, 0, 0.3)
+    // playSound(refs.showUpSoundRef)
+
     if (isScreenLock || viewRocket) {
       setBgImageUrl('')
     } else {
       setBgImageUrl(bgMain)
     }
-  }, [viewRocket, isScreenLock])
+  }, [viewRocket])
+
+  const {
+    refs,
+    playSound,
+    toggleBgMusic,
+    renderAudioElements,
+    // renderLoadingScreen,
+    // isReady,
+  } = useSounds()
 
   /**
    * 로켓 작동 함수
@@ -64,8 +73,7 @@ export default function MainContainer({
         setBgEffectSwitch(true)
         setPopOut(false)
         changeMainSubView('intro')
-        playSound(refs.hiThereVoiceRef)
-      }, 2300)
+      }, 1000)
     }, 500)
   }
 
@@ -75,31 +83,21 @@ export default function MainContainer({
     case 'intro':
       component = (
         <Intro
+          playSound={playSound}
+          menuTapSoundRef={refs.menuTapSoundRef}
           onGuideClick={() => {
             setViewGuideModal(true)
+            toggleBgMusic()
           }}
           onStartClick={() => {
             changeMainSubView('contentsList')
           }}
           onMyMovieClick={() => {
-            changeMainSubView('myMovies')
+            console.log('My Movies 클릭 시 화면 실행')
           }}
         />
       )
       break
-
-    case 'myMovies':
-      component = (
-        <MyMovies
-          changeMainView={changeMainView}
-          onClick={() => {
-            playSound(refs.menuTapSoundRef, 0.25, 0.8)
-            changeMainSubView('intro')
-          }}
-        />
-      )
-      break
-
     case 'contentsList':
       component = (
         <ContentsList
@@ -123,21 +121,31 @@ export default function MainContainer({
   }
 
   return (
-    <FrameBody viewStarfield bgImage={bgImageUrl} activeFadeIn={bgEffectSwitch}>
-      <WrapperHome>{component}</WrapperHome>
+    <>
+      {renderAudioElements()}
+      <FrameBody
+        viewStarfield
+        bgImage={bgImageUrl}
+        activeFadeIn={bgEffectSwitch}
+      >
+        <WrapperHome className={popOut ? 'screen-transition' : ''}>
+          {component}
+        </WrapperHome>
 
-      {viewGuideModal && (
-        <ModalGuide
-          videoUrl={tempVideo}
-          onClickClose={() => {
-            playSound(refs.closeTapSoundRef)
-            setTimeout(() => {
-              setViewGuideModal(false)
-              toggleBgMusic()
-            }, 500)
-          }}
-        />
-      )}
-    </FrameBody>
+        {viewGuideModal && (
+          <ModalGuide
+            videoUrl={tempVideo}
+            onClickClose={() => {
+              playSound(refs.closeTapSoundRef)
+
+              setTimeout(() => {
+                setViewGuideModal(false)
+                toggleBgMusic()
+              }, 500)
+            }}
+          />
+        )}
+      </FrameBody>
+    </>
   )
 }

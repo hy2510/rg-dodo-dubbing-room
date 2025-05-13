@@ -44,23 +44,23 @@ export default function ContentsList({
     switch (level) {
       case 'level_a':
         imageComponent = isActive ? (
-          <img src={imgBtnTabLevelAOn} draggable="false" alt="" />
+          <img src={imgBtnTabLevelAOn} />
         ) : (
-          <img src={imgBtnTabLevelA} draggable="false" alt="" />
+          <img src={imgBtnTabLevelA} />
         )
         break
       case 'level_b':
         imageComponent = isActive ? (
-          <img src={imgBtnTabLevelBOn} draggable="false" alt="" />
+          <img src={imgBtnTabLevelBOn} />
         ) : (
-          <img src={imgBtnTabLevelB} draggable="false" alt="" />
+          <img src={imgBtnTabLevelB} />
         )
         break
       case 'level_c':
         imageComponent = isActive ? (
-          <img src={imgBtnTabLevelCOn} draggable="false" alt="" />
+          <img src={imgBtnTabLevelCOn} />
         ) : (
-          <img src={imgBtnTabLevelC} draggable="false" alt="" />
+          <img src={imgBtnTabLevelC} />
         )
         break
     }
@@ -78,11 +78,7 @@ export default function ContentsList({
 
   return (
     <StyledDubContentsList>
-      <FrameListHeader
-        title="DODO’s Dubbing Room"
-        onClick={onClick}
-        theme="content"
-      />
+      <FrameListHeader title="DODO’s Dubbing Room" onClick={onClick} />
 
       {/* 레벨 셀렉터 */}
       <StyledTabBar>
@@ -124,7 +120,6 @@ export default function ContentsList({
             <img
               src={`src/assets/images/thumbnail/level_a/${item.image_name}`}
               alt={item.image_name}
-              draggable="false"
             />
           </div>
         ))}
