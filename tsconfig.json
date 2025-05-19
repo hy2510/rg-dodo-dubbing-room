@@ -31,6 +31,6 @@
     "downlevelIteration": true,
     "typeRoots": ["./node_modules/@types", "@types"]
   },
-  "include": ["src", "project-config.d.ts"],
+  "include": ["src", "project-config.d.ts", "public/starfield.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -6,6 +6,7 @@ import Rehearsal from '@pages/Rehearsal'
 import FrameBody from '@components/FrameBody'
 import BtnBackTitle from '@components/BtnBackTitle'
 import Dubbing from '@pages/Dubbing'
+import { useSoundsContext } from '@contexts/SoundsContext'
 
 type DubbingContainerProps = {
   changeMainView: (view: MainView) => void
@@ -19,6 +20,7 @@ export default function DubbingContainer({
 }: DubbingContainerProps) {
   const [dubbingView, setDubbingView] = useState<DubbingViewProps>('rehearsal')
   const [speakMode, setSpeakMode] = useState<SpeakMode>('single')
+  const { isBgmMute, playSound, refs, toggleBgMusic } = useSoundsContext()
 
   useEffect(() => {}, [dubbingView])
 
@@ -44,6 +46,8 @@ export default function DubbingContainer({
         title="Alligator's Apples"
         onClick={() => {
           changeMainView('main')
+          playSound(refs.menuTapSoundRef, 0.25, 0.8)
+          !isBgmMute && toggleBgMusic()
         }}
       />
 

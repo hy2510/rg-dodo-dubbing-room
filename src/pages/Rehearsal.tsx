@@ -8,6 +8,7 @@ import tempVideo from '@assets/movies/70101001.mp4'
 import ModalSelectMode from '@components/modals/ModalSelectMode'
 import { SpeakMode } from './containers/DubbingContainer'
 import { StyledSpeechBubble } from '@components/dubbing/SpeechBubble'
+import { useSoundsContext } from '@contexts/SoundsContext'
 
 type RehearsalProps = {
   selectSpeakMode: (mode: SpeakMode) => void
@@ -15,6 +16,8 @@ type RehearsalProps = {
 
 export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
   const [viewSelectMode, setViewSelectMode] = useState<boolean>(false)
+
+  const { playSound, refs } = useSoundsContext()
 
   return (
     <>
@@ -63,6 +66,7 @@ export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
                   <img
                     src={`src/assets/images/character/${imgSrc}.png`}
                     alt=""
+                    draggable="false"
                   />
                 </div>
                 <div className="text-box">{text}</div>
@@ -75,6 +79,7 @@ export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
             className="btn-start"
             onClick={() => {
               setViewSelectMode(true)
+              playSound(refs.menuTapSoundRef, 0.25, 0.8)
             }}
           >
             Let's Speak

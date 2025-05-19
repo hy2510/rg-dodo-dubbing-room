@@ -7,6 +7,7 @@ import sndLaunch from '@assets/sounds/res-launch_sound.mp3'
 import sndHiThere from '@assets/sounds/res-hi_captain_voice.mp3'
 import sndMenuTab from '@assets/sounds/btn-menu_tap.mp3'
 import sndClose from '@assets/sounds/btn-close.mp3'
+import sndPowerDown from '@assets/sounds/res-power_down.mp3'
 
 interface SoundItem {
   ref: React.RefObject<HTMLAudioElement>
@@ -16,12 +17,14 @@ interface SoundItem {
 }
 
 export function useSounds() {
+  const [isBgmMute, setIsBgmMute] = useState(false)
   const bgMusicRef = useRef<HTMLAudioElement>(null)
   const showUpSoundRef = useRef<HTMLAudioElement>(null)
   const launchSoundRef = useRef<HTMLAudioElement>(null)
   const hiThereVoiceRef = useRef<HTMLAudioElement>(null)
   const menuTapSoundRef = useRef<HTMLAudioElement>(null)
   const closeTapSoundRef = useRef<HTMLAudioElement>(null)
+  const powerDownSoundRef = useRef<HTMLAudioElement>(null)
 
   const sounds: Record<string, SoundItem> = {
     bgMusic: {
@@ -53,6 +56,11 @@ export function useSounds() {
     closeTapSound: {
       ref: closeTapSoundRef,
       src: sndClose,
+      preload: 'auto',
+    },
+    powerDownSound: {
+      ref: powerDownSoundRef,
+      src: sndPowerDown,
       preload: 'auto',
     },
   }
@@ -105,6 +113,15 @@ export function useSounds() {
     }
   }
 
+  const stopSound = (ref: React.RefObject<HTMLAudioElement>) => {
+    const audio = ref.current
+
+    if (audio) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+  }
+
   const toggleBgMusic = () => {
     const audio = bgMusicRef.current
 
@@ -130,8 +147,12 @@ export function useSounds() {
       hiThereVoiceRef,
       menuTapSoundRef,
       closeTapSoundRef,
+      powerDownSoundRef,
     },
+    isBgmMute,
+    setIsBgmMute,
     playSound,
+    stopSound,
     toggleBgMusic,
     renderAudioElements,
     renderLoadingScreen,

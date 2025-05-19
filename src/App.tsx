@@ -1,16 +1,16 @@
-import { Suspense, useEffect, useState } from 'react'
+import { SoundsProvider } from '@contexts/SoundsContext'
+import { Suspense, useState } from 'react'
 import AppContextProvider from '@contexts/AppContext'
 
-import { useSounds } from '@hooks/useSounds'
-
-import { ScreenBlock } from '@pages/ScreenBlock'
+import ScreenBlock from '@pages/ScreenBlock'
 import MainContainer from '@pages/containers/MainContainer'
 import DubbingContainer from '@pages/containers/DubbingContainer'
 
 // 스타일
 import './stylesheets/App.scss'
+import Loading from '@components/Loading'
 
-export type MainView = 'main' | 'dubbing'
+export type MainView = 'main' | 'dubbing' | 'review'
 export type MainSubView = 'launcher' | 'intro' | 'contentsList' | 'myMovies'
 
 export default function App() {
@@ -19,35 +19,6 @@ export default function App() {
 
   const [mainView, setMainView] = useState<MainView>('main')
   const [mainSubView, setMainSubView] = useState<MainSubView>('launcher')
-  const [dubbingSubView, setDubbingSubView] = useState<MainView>('dubbing')
-
-  const {
-    refs,
-    playSound,
-    toggleBgMusic,
-    renderAudioElements,
-    // renderLoadingScreen,
-    // isReady,
-  } = useSounds()
-
-  useEffect(() => {
-    if (mainView === 'main' && !isScreenLock) {
-      playSound(refs.bgMusicRef, 0, 0.3)
-      playSound(refs.showUpSoundRef)
-    }
-  }, [isScreenLock])
-
-  useEffect(() => {
-    if (!isScreenLock) {
-      if (mainView === 'main') {
-        if (mainSubView === 'launcher') {
-          playSound(refs.showUpSoundRef)
-        } else if (mainSubView === 'intro') {
-          playSound(refs.hiThereVoiceRef)
-        }
-      }
-    }
-  }, [mainView, mainSubView, dubbingSubView])
 
   const enterFullscreen = (): void => {
     const elem = document.documentElement as HTMLElement & {
@@ -67,7 +38,7 @@ export default function App() {
    * 스크린 제거
    */
   const removeScreenBlock = () => {
-    enterFullscreen()
+    // enterFullscreen()
 
     setIsScreenLock(false)
     setViewRocket(true)
@@ -99,23 +70,25 @@ export default function App() {
 
   return (
     <AppContextProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        {renderAudioElements()}
-        {isScreenLock && <ScreenBlock onClick={removeScreenBlock} />}
-
-        {mainView === 'main' ? (
-          <MainContainer
-            isScreenLock={isScreenLock}
-            viewRocket={viewRocket}
-            mainSubView={mainSubView}
-            changeViewRocket={changeViewRocket}
-            changeMainView={changeMainView}
-            changeMainSubView={changeMainSubView}
-          />
-        ) : (
-          <DubbingContainer changeMainView={changeMainView} />
-        )}
-      </Suspense>
+      <SoundsProvider>
+        <Suspense fallback={<Loading />}>
+          {isScreenLock && <ScreenBlock onClick={removeScreenBlock} />}
+          {/* 로딩 */}
+          {/* <Loading /> */}
+          {mainView === 'main' ? (
+            <MainContainer
+              isScreenLock={isScreenLock}
+              viewRocket={viewRocket}
+              mainSubView={mainSubView}
+              changeViewRocket={changeViewRocket}
+              changeMainView={changeMainView}
+              changeMainSubView={changeMainSubView}
+            />
+          ) : (
+            <DubbingContainer changeMainView={changeMainView} />
+          )}
+        </Suspense>
+      </SoundsProvider>
     </AppContextProvider>
   )
 }

@@ -1,6 +1,23 @@
+import { useSoundsContext } from '@contexts/SoundsContext'
 import styled from 'styled-components'
 
-export const ScreenBlock = styled.div`
+type ScreenBlockProps = {
+  onClick: () => void
+}
+
+export default function ScreenBlock({ onClick }: ScreenBlockProps) {
+  const { playSound, refs } = useSoundsContext()
+
+  const handleClick = () => {
+    playSound(refs.bgMusicRef, 0, 0.3)
+    playSound(refs.showUpSoundRef)
+    onClick()
+  }
+
+  return <StyledScreenBlock onClick={handleClick} />
+}
+
+const StyledScreenBlock = styled.div`
   position: fixed;
   top: 0;
   left: 0;

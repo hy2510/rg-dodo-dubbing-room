@@ -5,9 +5,15 @@ import {
   imgBtnCloseModal,
   imgBtnCloseModalAct,
   imgBtnFullMode,
+  imgBtnFullModeAction,
   imgBtnSingleMode,
+  imgBtnSingleModeAction,
+  resTxtSingleMode,
+  resTxtFullMode,
 } from '@utils/Assets'
 import { SpeakMode } from '@pages/containers/DubbingContainer'
+import { useSoundsContext } from '@contexts/SoundsContext'
+import { useState } from 'react'
 
 type ModalSelectModeProps = {
   selectSpeakMode: (mode: SpeakMode) => void
@@ -18,20 +24,50 @@ export default function ModalSelectMode({
   selectSpeakMode,
   onClickClose,
 }: ModalSelectModeProps) {
+  const { playSound, refs } = useSoundsContext()
+
+  const [singleAction, setSingleAction] = useState<string>(imgBtnSingleMode)
+  const [fullAction, setFullAction] = useState(imgBtnFullMode)
+
+  const handleClose = () => {
+    onClickClose?.()
+    playSound(refs.closeTapSoundRef)
+  }
+
+  const handleSelectSingle = () => {
+    playSound(refs.menuTapSoundRef, 0.25, 0.8)
+    setSingleAction(imgBtnSingleModeAction)
+
+    setTimeout(() => {
+      selectSpeakMode('single')
+    }, 3000)
+  }
+
+  const handleSelectFullCast = () => {
+    playSound(refs.menuTapSoundRef, 0.25, 0.8)
+    setFullAction(imgBtnFullModeAction)
+
+    setTimeout(() => {
+      selectSpeakMode('full')
+    }, 3000)
+  }
+
   return (
     <StyledModalSelectMode>
       <div className="modal-container">
         <div className="buttons">
           <StyledModeButton
-            image={imgBtnSingleMode}
-            onClick={() => selectSpeakMode('single')}
+            txtImage={resTxtSingleMode}
+            image={singleAction}
+            onClick={() => handleSelectSingle()}
           />
           <StyledModeButton
-            image={imgBtnFullMode}
-            onClick={() => selectSpeakMode('full')}
+            txtImage={resTxtFullMode}
+            image={fullAction}
+            onClick={() => handleSelectFullCast()}
           />
         </div>
-        <StyledCloseButton onClick={onClickClose} />
+        <StyledCloseButton onClick={handleClose} />
       </div>
     </StyledModalSelectMode>
   )
@@ -46,7 +82,7 @@ const tapHighlightNone = css`
 
 const activeEffect = css`
   &:active {
-    transform: scale(0.95);
+    /* transform: scale(0.95); */
     opacity: 0.9;
   }
 `
@@ -76,13 +112,17 @@ const StyledModalSelectMode = styled.div`
   }
 `
 
-const StyledModeButton = styled.div<{ image: string }>`
+const StyledModeButton = styled.div<{ txtImage: string; image: string }>`
   ${tapHighlightNone}
   ${activeEffect}
   cursor: pointer;
   width: 100%;
   height: 100%;
-  background: ${({ image }) => `url('${image}') center / auto 100% no-repeat`};
+  background-image: ${({ txtImage, image }) =>
+    `url('${txtImage}'), url('${image}')`};
+  background-position: top 50px center, center;
+  background-size: 180px, auto 100%;
+  background-repeat: no-repeat;
 `
 
 const StyledCloseButton = styled.div`

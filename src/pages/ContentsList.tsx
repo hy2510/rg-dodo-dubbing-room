@@ -18,6 +18,7 @@ import { StyledListBoard } from '@components/main/ListBoard'
 
 import levelAData from '@assets/images/thumbnail/level_a/level_a_data.json'
 import FrameListHeader from '@components/FrameListHeader'
+import { useSoundsContext } from '@contexts/SoundsContext'
 
 type DubContentsListProps = {
   changeMainView: (view: MainView) => void
@@ -37,6 +38,8 @@ export default function ContentsList({
   const levelList: LevelList[] = ['level_a', 'level_b', 'level_c']
   const tagList: TagList[] = ['All', 'Emotion', 'Greeting']
 
+  const { isBgmMute, playSound, refs, toggleBgMusic } = useSoundsContext()
+
   const renderTabItem = (level: LevelList) => {
     const isActive = currentTabView === level
     let imageComponent
@@ -44,23 +47,23 @@ export default function ContentsList({
     switch (level) {
       case 'level_a':
         imageComponent = isActive ? (
-          <img src={imgBtnTabLevelAOn} />
+          <img src={imgBtnTabLevelAOn} draggable="false" alt="" />
         ) : (
-          <img src={imgBtnTabLevelA} />
+          <img src={imgBtnTabLevelA} draggable="false" alt="" />
         )
         break
       case 'level_b':
         imageComponent = isActive ? (
-          <img src={imgBtnTabLevelBOn} />
+          <img src={imgBtnTabLevelBOn} draggable="false" alt="" />
         ) : (
-          <img src={imgBtnTabLevelB} />
+          <img src={imgBtnTabLevelB} draggable="false" alt="" />
         )
         break
       case 'level_c':
         imageComponent = isActive ? (
-          <img src={imgBtnTabLevelCOn} />
+          <img src={imgBtnTabLevelCOn} draggable="false" alt="" />
         ) : (
-          <img src={imgBtnTabLevelC} />
+          <img src={imgBtnTabLevelC} draggable="false" alt="" />
         )
         break
     }
@@ -69,7 +72,12 @@ export default function ContentsList({
       <div
         key={level}
         className="tab-menu-item"
-        onClick={() => !isActive && setCurrentTabView(level)}
+        onClick={() => {
+          if (!isActive) {
+            setCurrentTabView(level)
+            playSound(refs.closeTapSoundRef)
+          }
+        }}
       >
         {imageComponent}
       </div>
@@ -78,7 +86,11 @@ export default function ContentsList({
 
   return (
     <StyledDubContentsList>
-      <FrameListHeader title="DODO’s Dubbing Room" onClick={onClick} />
+      <FrameListHeader
+        title="DODO’s Dubbing Room"
+        onClick={onClick}
+        theme="content"
+      />
 
       {/* 레벨 셀렉터 */}
       <StyledTabBar>
@@ -91,7 +103,10 @@ export default function ContentsList({
           <div
             key={tag}
             className={`tag-item ${currentTagView == tag ? 'active' : ''}`}
-            onClick={() => setCurrentTagView(tag)}
+            onClick={() => {
+              setCurrentTagView(tag)
+              playSound(refs.closeTapSoundRef)
+            }}
           >
             {tag}
           </div>
@@ -106,6 +121,8 @@ export default function ContentsList({
             className="thumbnail"
             onClick={() => {
               changeMainView('dubbing')
+              playSound(refs.menuTapSoundRef, 0.25, 0.8)
+              !isBgmMute && toggleBgMusic()
             }}
           >
             <div className="completed-mark-box ">
@@ -120,6 +137,7 @@ export default function ContentsList({
             <img
               src={`src/assets/images/thumbnail/level_a/${item.image_name}`}
               alt={item.image_name}
+              draggable="false"
             />
           </div>
         ))}

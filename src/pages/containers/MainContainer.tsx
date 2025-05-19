@@ -1,10 +1,10 @@
+import { useSoundsContext } from '@contexts/SoundsContext'
+
 import { useEffect, useState } from 'react'
 
 import { bgMain } from '@utils/Assets'
 
 import tempVideo from '@assets/movies/70101001.mp4'
-
-import { useSounds } from '@hooks/useSounds'
 
 import { MainView, MainSubView } from 'src/App'
 
@@ -16,6 +16,7 @@ import Intro from '@pages/Intro'
 import FrameBody from '@components/FrameBody'
 import ContentsList from '@pages/ContentsList'
 import ModalGuide from '@components/modals/ModalGuide'
+import MyMovies from '@pages/MyMovies'
 
 type MainContainerProps = {
   isScreenLock: boolean
@@ -39,25 +40,16 @@ export default function MainContainer({
   const [popOut, setPopOut] = useState(false)
   const [viewGuideModal, setViewGuideModal] = useState(false)
 
-  useEffect(() => {
-    // playSound(refs.bgMusicRef, 0, 0.3)
-    // playSound(refs.showUpSoundRef)
+  const { isBgmMute, setIsBgmMute, playSound, stopSound, toggleBgMusic, refs } =
+    useSoundsContext()
 
+  useEffect(() => {
     if (isScreenLock || viewRocket) {
       setBgImageUrl('')
     } else {
       setBgImageUrl(bgMain)
     }
-  }, [viewRocket])
-
-  const {
-    refs,
-    playSound,
-    toggleBgMusic,
-    renderAudioElements,
-    // renderLoadingScreen,
-    // isReady,
-  } = useSounds()
+  }, [viewRocket, isScreenLock])
 
   /**
    * 로켓 작동 함수
@@ -73,7 +65,8 @@ export default function MainContainer({
         setBgEffectSwitch(true)
         setPopOut(false)
         changeMainSubView('intro')
-      }, 1000)
+        playSound(refs.hiThereVoiceRef)
+      }, 2300)
     }, 500)
   }
 
@@ -83,21 +76,44 @@ export default function MainContainer({
     case 'intro':
       component = (
         <Intro
-          playSound={playSound}
-          menuTapSoundRef={refs.menuTapSoundRef}
+          onBgmMuteClick={() => {
+            if (isBgmMute) {
+              setIsBgmMute(false)
+              playSound(refs.bgMusicRef, 0, 0.3)
+            } else {
+              setIsBgmMute(true)
+              stopSound(refs.bgMusicRef)
+            }
+          }}
           onGuideClick={() => {
             setViewGuideModal(true)
-            toggleBgMusic()
+            if (!isBgmMute) {
+              setIsBgmMute(false)
+              toggleBgMusic()
+            }
           }}
           onStartClick={() => {
             changeMainSubView('contentsList')
           }}
           onMyMovieClick={() => {
-            console.log('My Movies 클릭 시 화면 실행')
+            changeMainSubView('myMovies')
           }}
         />
       )
       break
+
+    case 'myMovies':
+      component = (
+        <MyMovies
+          changeMainView={changeMainView}
+          onClick={() => {
+            playSound(refs.menuTapSoundRef, 0.25, 0.8)
+            changeMainSubView('intro')
+          }}
+        />
+      )
+      break
+
     case 'contentsList':
       component = (
         <ContentsList
@@ -121,31 +137,21 @@ export default function MainContainer({
   }
 
   return (
-    <>
-      {renderAudioElements()}
-      <FrameBody
-        viewStarfield
-        bgImage={bgImageUrl}
-        activeFadeIn={bgEffectSwitch}
-      >
-        <WrapperHome className={popOut ? 'screen-transition' : ''}>
-          {component}
-        </WrapperHome>
+    <FrameBody viewStarfield bgImage={bgImageUrl} activeFadeIn={bgEffectSwitch}>
+      <WrapperHome>{component}</WrapperHome>
 
-        {viewGuideModal && (
-          <ModalGuide
-            videoUrl={tempVideo}
-            onClickClose={() => {
-              playSound(refs.closeTapSoundRef)
-
-              setTimeout(() => {
-                setViewGuideModal(false)
-                toggleBgMusic()
-              }, 500)
-            }}
-          />
-        )}
-      </FrameBody>
-    </>
+      {viewGuideModal && (
+        <ModalGuide
+          videoUrl={tempVideo}
+          onClickClose={() => {
+            playSound(refs.closeTapSoundRef)
+            setTimeout(() => {
+              setViewGuideModal(false)
+              !isBgmMute && toggleBgMusic()
+            }, 500)
+          }}
+        />
+      )}
+    </FrameBody>
   )
 }

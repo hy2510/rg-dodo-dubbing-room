@@ -1,3 +1,4 @@
+import { useSoundsContext } from '@contexts/SoundsContext'
 import styled from 'styled-components'
 
 import {
@@ -16,26 +17,29 @@ import {
 } from '@utils/Assets'
 
 type IntroProps = {
+  onBgmMuteClick: () => void
   onGuideClick: () => void
   onStartClick: () => void
   onMyMovieClick: () => void
-  playSound: (
-    ref: React.RefObject<HTMLAudioElement>,
-    startTime?: number,
-    volume?: number,
-  ) => void
-  menuTapSoundRef: React.RefObject<HTMLAudioElement>
 }
 
 export default function Intro({
+  onBgmMuteClick,
   onGuideClick,
   onStartClick,
   onMyMovieClick,
-  playSound,
-  menuTapSoundRef,
 }: IntroProps) {
+  const { isBgmMute, playSound, refs } = useSoundsContext()
+
   return (
     <StyledIntro>
+      <div className="intro-header">
+        <div className="btn-exit" />
+        <div
+          className={`btn-mute ${isBgmMute ? 'on' : ''}`}
+          onClick={onBgmMuteClick}
+        />
+      </div>
       <div className="rotating-sign">
         <object type="image/svg+xml" data={resRotatingSign} width="100%" />
       </div>
@@ -51,21 +55,21 @@ export default function Intro({
       <div
         className="btn-guide"
         onClick={() => {
-          playSound(menuTapSoundRef, 0.25, 0.8)
+          playSound(refs.menuTapSoundRef, 0.25, 0.8)
           setTimeout(onGuideClick, 300)
         }}
       />
       <div
         className="btn-start"
         onClick={() => {
-          playSound(menuTapSoundRef, 0.25, 0.8)
+          playSound(refs.menuTapSoundRef, 0.25, 0.8)
           onStartClick()
         }}
       />
       <div
         className="btn-my-movie"
         onClick={() => {
-          playSound(menuTapSoundRef, 0.25, 0.8)
+          playSound(refs.menuTapSoundRef, 0.25, 0.8)
           onMyMovieClick()
         }}
       />
@@ -78,11 +82,46 @@ export default function Intro({
   )
 }
 
-// Styled
+// ========== Styled Components ==========
+
 const StyledIntro = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+
+  .intro-header {
+    position: absolute;
+    top: 0;
+    width: calc(100% - 40px);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .btn-exit,
+    .btn-mute {
+      cursor: pointer;
+      width: 55px;
+      height: 55px;
+      border-radius: 100px;
+      border: 3px solid #96e3ed;
+      background-color: #002281;
+      background-position: center;
+      background-size: 24px;
+      background-repeat: no-repeat;
+    }
+
+    .btn-mute {
+      background-image: url('src/assets/images/home/btn-mute_n.svg');
+
+      &.on {
+        background-image: url('src/assets/images/home/btn-mute_y.svg');
+      }
+    }
+
+    .btn-exit {
+      background-image: url('src/assets/images/home/btn-exit.svg');
+    }
+  }
 
   .rotating-sign,
   .mixing-console,

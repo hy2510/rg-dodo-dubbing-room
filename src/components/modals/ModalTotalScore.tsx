@@ -7,7 +7,6 @@ import {
   imgBtnFinish,
 } from '@utils/Assets'
 
-import tempVideo from '@assets/movies/70101001.mp4'
 import imgGraph from '@assets/images/common/sample-pentagon_graph.png'
 
 type ModalTotalScoreProps = {
@@ -21,6 +20,7 @@ type ModalTotalScoreProps = {
   onClickClose?: () => void
   onClickFinish?: () => void
   checkIsReview: boolean
+  thumbnail: string
 }
 
 export default function ModalTotalScore({
@@ -28,12 +28,12 @@ export default function ModalTotalScore({
   level,
   playTime,
   totalScore,
-  dubTime,
   dubSentence,
   dubWords,
   onClickClose,
   onClickFinish,
   checkIsReview,
+  thumbnail,
 }: ModalTotalScoreProps) {
   const [isReview, setIsReview] = useState<boolean>(false)
 
@@ -47,7 +47,8 @@ export default function ModalTotalScore({
         <div className="col-left">
           <div className="dub-info">
             <div className="row-1st">
-              <video src={tempVideo} playsInline autoPlay loop controls />
+              <img src={thumbnail} alt="" draggable="false" />
+              {/* <video src={tempVideo} playsInline autoPlay loop controls /> */}
             </div>
             <div className="row-2nd">
               <div>더빙날짜</div>
@@ -56,6 +57,10 @@ export default function ModalTotalScore({
               <div>{level}</div>
               <div>영상시간</div>
               <div>{playTime}</div>
+              <div>문장 개수</div>
+              <div>{dubSentence}</div>
+              <div>단어 개수</div>
+              <div>{dubWords}</div>
             </div>
           </div>
         </div>
@@ -63,7 +68,7 @@ export default function ModalTotalScore({
           <div className="row-1st">
             전체 스코어 <span>{totalScore}</span>점
           </div>
-          <div className="row-2nd">
+          {/* <div className="row-2nd">
             <div className="dub-info-item">
               <div className="dub-info-label">소요 시간</div>
               <div className="dub-info-value">{dubTime}</div>
@@ -76,10 +81,16 @@ export default function ModalTotalScore({
               <div className="dub-info-label">단어 개수</div>
               <div className="dub-info-value">{dubWords}</div>
             </div>
-          </div>
+          </div> */}
           <div className="row-3rd">
             {/* 여기에 펜타곤 그래프 삽입 */}
-            <img src={imgGraph} alt="" width={'auto'} height={'300px'} />
+            <img
+              src={imgGraph}
+              alt=""
+              width={'auto'}
+              height={'400px'}
+              draggable="false"
+            />
           </div>
         </div>
         {isReview ? (
@@ -138,7 +149,7 @@ const StyledModalTotalScore = styled.div`
         .row-1st {
           margin-bottom: 10px;
 
-          video {
+          img {
             display: block;
             width: 100%;
             border-radius: 15px;
@@ -148,8 +159,8 @@ const StyledModalTotalScore = styled.div`
         .row-2nd {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-          padding: 20px;
+          gap: 12px;
+          padding: 15px;
           color: #ffffff;
 
           & > *:nth-child(even) {

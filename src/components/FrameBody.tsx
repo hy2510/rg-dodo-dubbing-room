@@ -51,9 +51,10 @@ export default function FrameBody({
         </div>
         {viewStarfield && (
           <StarField
-            numStars={800}
+            numStars={1500}
             minSpeed={3}
-            maxSpeed={10}
+            maxSpeed={5}
+            trails={true}
             pauseOnBlur={false}
             className="star-field"
           />

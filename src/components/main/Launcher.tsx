@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 
-import { resFlyingRocket } from '@utils/Assets'
-
 import BtnBoom from '@components/BtnBoom'
+import { resRocketGo, resRocketStop } from '@utils/Assets'
 
 type LauncherProps = {
   viewRocket: boolean
@@ -22,13 +21,13 @@ export default function Launcher({
           viewRocket ? 'animate__animated animate__fadeInUpBig' : 'd-none'
         }
       >
-        <BtnBoom
-          bgColor="transparent"
-          color="#fff"
-          className={popOut ? 'pop-out' : 'res-rocket-ani'}
-          onClick={onRocketClick}
-        >
-          <img src={resFlyingRocket} alt="" width={250} />
+        <BtnBoom bgColor="transparent" color="#fff" onClick={onRocketClick}>
+          <img
+            src={popOut ? resRocketGo : resRocketStop}
+            width={815}
+            alt="rocket"
+            draggable="false"
+          />
         </BtnBoom>
       </div>
     </StyledLauncherBox>
@@ -53,11 +52,6 @@ const StyledLauncherBox = styled.div`
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s;
-  padding-top: 165px;
-
-  &.screen-transition {
-    background: linear-gradient(180deg, #27179e 0%, #255fec 58.65%);
-  }
 
   .d-none {
     display: none;

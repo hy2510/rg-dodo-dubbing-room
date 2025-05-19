@@ -20,6 +20,7 @@ export default function useRecorder() {
     startTime: string,
     endTime: string,
     isWorking: React.MutableRefObject<boolean>,
+    onComplete?: () => void,
   ) => {
     try {
       // 오디오의 duration을 구한 뒤 녹음 시작
@@ -52,6 +53,10 @@ export default function useRecorder() {
                 isWorking.current = false
                 console.log(isWorking.current)
               }, duration)
+
+              if (onComplete) {
+                onComplete() // ✅ 녹음 완료 후 콜백 실행
+              }
 
               ////////////////////////////
               // to-do connect edutem api

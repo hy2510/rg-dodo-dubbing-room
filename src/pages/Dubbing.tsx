@@ -8,6 +8,8 @@ import {
   imgBtnSave,
   bgGraphArea,
   imgBtnLeft,
+  resDubSingleSign,
+  resDubFullSign,
 } from '@utils/Assets'
 
 import { convertTimeToSec } from '@utils/common'
@@ -24,6 +26,11 @@ import Visualizer from '@components/dubbing/Visualizer'
 import LiveVisualizer from '@components/dubbing/LiveVisualizer'
 import AlertBox from '@components/AlertBox'
 import ModalTotalScore from '@components/modals/ModalTotalScore'
+import {
+  CorrectAction,
+  IncorrectAction,
+} from '@components/dubbing/CorrectionMessage'
+import { useSoundsContext } from '@contexts/SoundsContext'
 
 type DubbingProps = {
   mode: SpeakMode
@@ -118,6 +125,22 @@ export default function Dubbing({ mode }: DubbingProps) {
         timeStampArr[recIndex].start,
         timeStampArr[recIndex].end,
         isWorking,
+        () => {
+          const recTime = 3000
+          // 정답일 때
+          setTimeout(() => {
+            playSound(refs.launchSoundRef, 0, 0.1)
+            setShowCorrect(true)
+            setTimeout(() => setShowCorrect(false), 2000)
+          }, recTime)
+
+          // 오답일 때
+          // playSound(refs.powerDownSoundRef, 0, 0.25)
+          // setShowIncorrect(true)
+          // setTimeout(() => {
+          //   setShowIncorrect(false)
+          // }, recTime)
+        },
       )
     }
   }
@@ -140,9 +163,20 @@ export default function Dubbing({ mode }: DubbingProps) {
     })
   }
 
+  const [showCorrect, setShowCorrect] = useState<boolean>(false)
+  const [showIncorrect, setShowIncorrect] = useState<boolean>(false)
+
+  const { playSound, refs } = useSoundsContext()
+
   return (
     <>
       <StyledDubStudio>
+        <div className="sign">
+          {/* 싱글모드 일 때 */}
+          <img src={resDubSingleSign} alt="" draggable="false" height={80} />
+          {/* 풀모드 일 때 */}
+          {/* <img src={resDubFullSign} alt="" draggable="false" height={80} /> */}
+        </div>
         <div className="row-1st">
           <div className="graph-area">
             {stream && (
@@ -161,29 +195,29 @@ export default function Dubbing({ mode }: DubbingProps) {
             <div className="col-left">
               {/* 녹음 버튼 */}
               <div
-                className="btn-rec"
+                className="btn-rec attention"
                 onClick={() => {
                   startRecord()
                 }}
               >
-                <img src={imgBtnRec} alt="" />
+                <img src={imgBtnRec} alt="" draggable="false" />
               </div>
 
               {/* 녹음된 문장 재생 */}
-              <div className="btn-play">
-                <img src={imgBtnPlay} alt="" />
+              <div className="btn-play btn-disabled">
+                <img src={imgBtnPlay} alt="" draggable="false" />
               </div>
             </div>
 
             <div className="col-center">
               {/* 이전 문장 보기 버튼 */}
               <div
-                className="btn-chev-left"
+                className="btn-chev-left btn-disabled"
                 onClick={() => {
                   setRecIndex(recIndex - 1)
                 }}
               >
-                <img src={imgBtnLeft} alt="" />
+                <img src={imgBtnLeft} alt="" draggable="false" />
               </div>
 
               {/* 현재 문장 */}
@@ -191,24 +225,24 @@ export default function Dubbing({ mode }: DubbingProps) {
 
               {/* 다음 문장 보기 버튼 */}
               <div
-                className="btn-chev-right"
+                className="btn-chev-right btn-disabled"
                 onClick={() => {
                   setRecIndex(recIndex + 1)
                 }}
               >
-                <img src={imgBtnRight} alt="" />
+                <img src={imgBtnRight} alt="" draggable="false" />
               </div>
             </div>
 
             <div className="col-right">
               {/* Save 버튼 */}
               <div
-                className="btn-save"
+                className="btn-save btn-disabled"
                 onClick={() => {
                   // setShowDubResult(true)
                 }}
               >
-                <img src={imgBtnSave} alt="" />
+                <img src={imgBtnSave} alt="" draggable="false" />
               </div>
             </div>
           </div>
@@ -232,6 +266,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                       .split(' ')[0]
                       .toLowerCase()}1.png`}
                     alt=""
+                    draggable="false"
                   />
                 </div>
                 <div
@@ -248,6 +283,10 @@ export default function Dubbing({ mode }: DubbingProps) {
         </div>
       </StyledDubStudio>
 
+      {/* 녹음후 정오답 표시 */}
+      {showCorrect && <CorrectAction />}
+      {showIncorrect && <IncorrectAction />}
+
       <div style={{ display: 'none' }}>
         <AlertBox message="목록으로 나가시겠습니까?" />
       </div>
@@ -263,6 +302,7 @@ export default function Dubbing({ mode }: DubbingProps) {
           dubSentence={30}
           dubWords={10}
           checkIsReview={false}
+          thumbnail="src/assets/images/thumbnail/level_a/70100002.jpg"
         />
       )}
     </>
@@ -279,6 +319,13 @@ const StyledDubStudio = styled.div`
   img {
     -webkit-user-drag: none;
     user-select: none;
+  }
+
+  .sign {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    z-index: 1;
   }
 
   .row-1st {
@@ -429,5 +476,51 @@ const StyledDubStudio = styled.div`
         border-radius: 999px;
       }
     }
+  }
+
+  .attention {
+    -webkit-animation: heartbeat 1.5s ease-in-out infinite both;
+    animation: heartbeat 1.5s ease-in-out infinite both;
+  }
+
+  @keyframes heartbeat {
+    from {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+      -webkit-transform-origin: center center;
+      transform-origin: center center;
+      -webkit-animation-timing-function: ease-out;
+      animation-timing-function: ease-out;
+    }
+    10% {
+      -webkit-transform: scale(0.91);
+      transform: scale(0.91);
+      -webkit-animation-timing-function: ease-in;
+      animation-timing-function: ease-in;
+    }
+    17% {
+      -webkit-transform: scale(0.98);
+      transform: scale(0.98);
+      -webkit-animation-timing-function: ease-out;
+      animation-timing-function: ease-out;
+    }
+    33% {
+      -webkit-transform: scale(0.87);
+      transform: scale(0.87);
+      -webkit-animation-timing-function: ease-in;
+      animation-timing-function: ease-in;
+    }
+    45% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+      -webkit-animation-timing-function: ease-out;
+      animation-timing-function: ease-out;
+    }
+  }
+
+  .btn-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
   }
 `
