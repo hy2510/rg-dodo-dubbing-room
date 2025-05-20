@@ -31,8 +31,8 @@ export default function LiveVisualizer({
     const height = canvas.offsetHeight
     canvas.width = width * dpr
     canvas.height = height * dpr
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.scale(dpr, dpr)
+    ctx.clearRect(0, 0, width, height)
 
     const audioCtx = new AudioContext()
     const analyser = audioCtx.createAnalyser()
@@ -83,12 +83,8 @@ export default function LiveVisualizer({
         pointsRef.current.push({ x, y })
       }
 
-      ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = '#0b0b3b'
-      ctx.fillRect(0, 0, width, height)
-
       ctx.beginPath()
-      ctx.lineWidth = 2
+      ctx.lineWidth = 3
       ctx.strokeStyle = color
 
       const points = pointsRef.current

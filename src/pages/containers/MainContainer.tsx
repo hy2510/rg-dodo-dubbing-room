@@ -1,22 +1,20 @@
-import { useSoundsContext } from '@contexts/SoundsContext'
-
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useSoundContext } from '@contexts/SoundContext'
 
 import { bgMain } from '@utils/Assets'
-
 import tempVideo from '@assets/movies/70101001.mp4'
 
-import { MainView, MainSubView } from 'src/App'
+import { MainSubView, MainView } from '@pages/containers/WrapperContainer'
 
 import { WrapperHome } from '@components/main/WrapperHome'
-
-import Launcher from '@components/main/Launcher'
-import Intro from '@pages/Intro'
-
 import FrameBody from '@components/FrameBody'
+import Launcher from '@components/main/Launcher'
+
+import Intro from '@pages/Intro'
 import ContentsList from '@pages/ContentsList'
-import ModalGuide from '@components/modals/ModalGuide'
 import MyMovies from '@pages/MyMovies'
+
+import ModalGuide from '@components/modals/ModalGuide'
 
 type MainContainerProps = {
   isScreenLock: boolean
@@ -35,122 +33,143 @@ export default function MainContainer({
   changeMainView,
   changeMainSubView,
 }: MainContainerProps) {
+  const {
+    isBgmMute,
+    audioList,
+    playSound,
+    pauseSound,
+    resumeSound,
+    stopSound,
+  } = useSoundContext()
+
   const [bgImageUrl, setBgImageUrl] = useState('')
   const [bgEffectSwitch, setBgEffectSwitch] = useState(false)
   const [popOut, setPopOut] = useState(false)
   const [viewGuideModal, setViewGuideModal] = useState(false)
 
-  const { isBgmMute, setIsBgmMute, playSound, stopSound, toggleBgMusic, refs } =
-    useSoundsContext()
+  // 공통 효과음
+  const playTapSound = () => {
+    playSound(audioList.menuTapSound, 0.25, 0.8)
+  }
 
+  // 배경 이미지 상태 업데이트
   useEffect(() => {
-    if (isScreenLock || viewRocket) {
-      setBgImageUrl('')
-    } else {
-      setBgImageUrl(bgMain)
-    }
-  }, [viewRocket, isScreenLock])
+    setBgImageUrl(isScreenLock || viewRocket ? '' : bgMain)
+  }, [isScreenLock, viewRocket])
 
-  /**
-   * 로켓 작동 함수
-   */
+  // 로켓 이펙트
   const handleRocketClick = () => {
-    playSound(refs.launchSoundRef)
+    playSound(audioList.launchSound)
 
     setTimeout(() => {
       setPopOut(true)
 
       setTimeout(() => {
+        setPopOut(false)
         changeViewRocket(false)
         setBgEffectSwitch(true)
-        setPopOut(false)
         changeMainSubView('intro')
-        playSound(refs.hiThereVoiceRef)
-      }, 2300)
+      }, 1000)
     }, 500)
   }
 
-  let component
+  /**
+   * 버튼 클릭 - Guide
+   */
+  const handleGuideOpen = () => {
+    if (!isBgmMute) pauseSound(audioList.bgMusic)
 
-  switch (mainSubView) {
-    case 'intro':
-      component = (
-        <Intro
-          onBgmMuteClick={() => {
-            if (isBgmMute) {
-              setIsBgmMute(false)
-              playSound(refs.bgMusicRef, 0, 0.3)
-            } else {
-              setIsBgmMute(true)
-              stopSound(refs.bgMusicRef)
-            }
-          }}
-          onGuideClick={() => {
-            setViewGuideModal(true)
-            if (!isBgmMute) {
-              setIsBgmMute(false)
-              toggleBgMusic()
-            }
-          }}
-          onStartClick={() => {
-            changeMainSubView('contentsList')
-          }}
-          onMyMovieClick={() => {
-            changeMainSubView('myMovies')
-          }}
-        />
-      )
-      break
+    stopSound(audioList.hiThereVoice)
+    playTapSound()
 
-    case 'myMovies':
-      component = (
-        <MyMovies
-          changeMainView={changeMainView}
-          onClick={() => {
-            playSound(refs.menuTapSoundRef, 0.25, 0.8)
-            changeMainSubView('intro')
-          }}
-        />
-      )
-      break
+    setViewGuideModal(true)
+  }
 
-    case 'contentsList':
-      component = (
-        <ContentsList
-          changeMainView={changeMainView}
-          onClick={() => {
-            playSound(refs.menuTapSoundRef, 0.25, 0.8)
-            changeMainSubView('intro')
-          }}
-        />
-      )
-      break
+  /**
+   * 버튼 클릭 - 가이드 닫기
+   */
+  const handleCloseGuide = () => {
+    playSound(audioList.closeTapSound)
 
-    default:
-      component = (
+    setTimeout(() => {
+      setViewGuideModal(false)
+
+      if (!isBgmMute) resumeSound(audioList.bgMusic)
+    }, 300)
+  }
+
+  /**
+   *  버튼 클릭 - Start
+   */
+  const handleStart = () => {
+    playTapSound()
+    stopSound(audioList.hiThereVoice)
+
+    changeMainSubView('contentsList')
+  }
+
+  /**
+   * 버튼 클릭 - My Movies
+   */
+  const handleMyMovie = () => {
+    playTapSound()
+    stopSound(audioList.hiThereVoice)
+
+    changeMainSubView('myMovies')
+  }
+
+  /**
+   * 버튼 클릭 - 뒤로 가기
+   */
+  const handleBack = () => {
+    playTapSound()
+
+    changeMainSubView('intro')
+  }
+
+  const PageRouter = useMemo(() => {
+    return {
+      launcher: (
         <Launcher
           viewRocket={viewRocket}
           popOut={popOut}
           onRocketClick={handleRocketClick}
         />
-      )
-  }
+      ),
+      intro: (
+        <Intro
+          onClickGuide={handleGuideOpen}
+          onClickStart={handleStart}
+          onClickMyMovie={handleMyMovie}
+        />
+      ),
+      contentsList: (
+        <ContentsList
+          changeMainView={changeMainView}
+          onClickBack={handleBack}
+        />
+      ),
+      myMovies: (
+        <MyMovies changeMainView={changeMainView} onClickBack={handleBack} />
+      ),
+    } satisfies Record<MainSubView, JSX.Element>
+  }, [
+    viewRocket,
+    popOut,
+    isBgmMute,
+    audioList,
+    changeMainView,
+    changeMainSubView,
+  ])
 
   return (
     <FrameBody viewStarfield bgImage={bgImageUrl} activeFadeIn={bgEffectSwitch}>
-      <WrapperHome>{component}</WrapperHome>
+      <WrapperHome className={popOut ? 'screen-transition' : ''}>
+        {PageRouter[mainSubView]}
+      </WrapperHome>
 
       {viewGuideModal && (
-        <ModalGuide
-          videoUrl={tempVideo}
-          onClickClose={() => {
-            playSound(refs.closeTapSoundRef)
-            setTimeout(() => {
-              setViewGuideModal(false)
-              !isBgmMute && toggleBgMusic()
-            }, 500)
-          }}
-        />
+        <ModalGuide videoUrl={tempVideo} onClickClose={handleCloseGuide} />
       )}
     </FrameBody>
   )

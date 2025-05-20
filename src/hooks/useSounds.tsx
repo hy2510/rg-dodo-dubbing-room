@@ -16,6 +16,16 @@ interface SoundItem {
   preload?: 'auto' | 'metadata' | 'none'
 }
 
+export type AudioList = {
+  bgMusic: React.RefObject<HTMLAudioElement>
+  showUpSound: React.RefObject<HTMLAudioElement>
+  launchSound: React.RefObject<HTMLAudioElement>
+  hiThereVoice: React.RefObject<HTMLAudioElement>
+  menuTapSound: React.RefObject<HTMLAudioElement>
+  closeTapSound: React.RefObject<HTMLAudioElement>
+  powerDownSound: React.RefObject<HTMLAudioElement>
+}
+
 export function useSounds() {
   const [isBgmMute, setIsBgmMute] = useState(false)
   const bgMusicRef = useRef<HTMLAudioElement>(null)
@@ -66,6 +76,7 @@ export function useSounds() {
   }
 
   const [isReady, setIsReady] = useState(false)
+  const [isMuteBGM, setIsMuteBGM] = useState(false)
 
   useEffect(() => {
     const audioElements = Object.values(sounds)
@@ -99,6 +110,12 @@ export function useSounds() {
     }
   }, [])
 
+  /**
+   * 오디오 재생
+   * @param ref
+   * @param startTime
+   * @param volume
+   */
   const playSound = (
     ref: React.RefObject<HTMLAudioElement>,
     startTime = 0,
@@ -113,6 +130,34 @@ export function useSounds() {
     }
   }
 
+  /**
+   * 오디오 일시 중지
+   * @param ref
+   */
+  const pauseSound = (ref: React.RefObject<HTMLAudioElement>) => {
+    const audio = ref.current
+
+    if (audio) {
+      audio.pause()
+    }
+  }
+
+  /**
+   * 오디오 다시 시작
+   * @param ref
+   */
+  const resumeSound = (ref: React.RefObject<HTMLAudioElement>) => {
+    const audio = ref.current
+
+    if (audio) {
+      audio.play()
+    }
+  }
+
+  /**
+   * 오디오 중지
+   * @param ref
+   */
   const stopSound = (ref: React.RefObject<HTMLAudioElement>) => {
     const audio = ref.current
 
@@ -122,7 +167,17 @@ export function useSounds() {
     }
   }
 
-  const toggleBgMusic = () => {
+  /**
+   * BGM 토글
+   */
+  const toggleBGM = () => {
+    if (isBgmMute) {
+      setIsBgmMute(false)
+      resumeSound(audioList.bgMusic)
+    } else {
+      setIsBgmMute(true)
+      pauseSound(audioList.bgMusic)
+    }
     const audio = bgMusicRef.current
 
     if (audio) {
@@ -130,33 +185,42 @@ export function useSounds() {
     }
   }
 
-  const renderAudioElements = (): JSX.Element[] =>
-    Object.entries(sounds).map(([key, { ref, src, loop, preload }]) => (
+  const renderAudioElements = (): JSX.Element[] => {
+    return Object.entries(sounds).map(([key, { ref, src, loop, preload }]) => (
       <audio key={key} ref={ref} src={src} loop={loop} preload={preload} />
     ))
+  }
 
   const renderLoadingScreen = () => (
     <StyledLoadingScreen>Loading Sounds...</StyledLoadingScreen>
   )
 
+  const changeBGMMute = (state: boolean) => {
+    setIsBgmMute(state)
+  }
+
+  const audioList: AudioList = {
+    bgMusic: bgMusicRef,
+    showUpSound: showUpSoundRef,
+    launchSound: launchSoundRef,
+    hiThereVoice: hiThereVoiceRef,
+    menuTapSound: menuTapSoundRef,
+    closeTapSound: closeTapSoundRef,
+    powerDownSound: powerDownSoundRef,
+  }
+
   return {
-    refs: {
-      bgMusicRef,
-      showUpSoundRef,
-      launchSoundRef,
-      hiThereVoiceRef,
-      menuTapSoundRef,
-      closeTapSoundRef,
-      powerDownSoundRef,
-    },
+    isReady,
     isBgmMute,
-    setIsBgmMute,
+    audioList,
     playSound,
+    pauseSound,
+    resumeSound,
     stopSound,
-    toggleBgMusic,
+    toggleBGM,
+    changeBGMMute,
     renderAudioElements,
     renderLoadingScreen,
-    isReady,
   }
 }
 

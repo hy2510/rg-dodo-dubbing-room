@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
+import { useSoundContext } from '@contexts/SoundContext'
 import styled from 'styled-components'
 
 import {
   imgBtnRec,
   imgBtnPlay,
-  imgBtnRight,
+  imgBtnChevRight,
   imgBtnSave,
   bgGraphArea,
-  imgBtnLeft,
+  imgBtnChevLeft,
   resDubSingleSign,
   resDubFullSign,
 } from '@utils/Assets'
 
 import { convertTimeToSec } from '@utils/common'
 
-import { SpeakMode } from './containers/DubbingContainer'
+import { SpeakMode } from '@pages/containers/DubbingContainer'
 
 import useFFmpeg from '@hooks/useFFmpeg'
 import useRecorder from '@hooks/useRecorder'
@@ -26,32 +27,25 @@ import Visualizer from '@components/dubbing/Visualizer'
 import LiveVisualizer from '@components/dubbing/LiveVisualizer'
 import AlertBox from '@components/AlertBox'
 import ModalTotalScore from '@components/modals/ModalTotalScore'
-import {
-  CorrectAction,
-  IncorrectAction,
-} from '@components/dubbing/CorrectionMessage'
-import { useSoundsContext } from '@contexts/SoundsContext'
+import CorrectionResult from '@components/dubbing/CorrectionResult'
 
 type DubbingProps = {
   mode: SpeakMode
+  timeStampArr: {
+    text: string
+    cls: string
+    start: string
+    end: string
+  }[]
 }
 
-export default function Dubbing({ mode }: DubbingProps) {
+export default function Dubbing({ mode, timeStampArr }: DubbingProps) {
+  const { audioList, playSound } = useSoundContext()
+
   const isWorking = useRef(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const videoPath =
     'https://wcfresource.a1edu.com/newsystem/aistudio/70100001.mp4'
-
-  const timeStampArr = [
-    { text: 'Hey, guys!', cls: 'highlight', start: '00:00.5', end: '00:02.8' },
-    {
-      text: "Hello! What's your name?",
-      cls: 'hold',
-      start: '00:04.2',
-      end: '00:07.1',
-    },
-    { text: 'My name is Leoni.', cls: '', start: '00:08.2', end: '00:10.3' },
-  ]
 
   // 특정 구간부터 원하는 구간까지 재생시킬 떄 사용하는 변수
   const [limit, setLimit] = useState({
@@ -61,28 +55,18 @@ export default function Dubbing({ mode }: DubbingProps) {
   })
 
   const { recFiles, stream, startRecording } = useRecorder()
-  const { outputFile, partFile, trans, getPartFile } = useFFmpeg()
+  const { outputFile, partFiles, trans, getPartFiles } = useFFmpeg()
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const [recIndex, setRecIndex] = useState(0)
 
   const [showModalTotalScore, setShowModalTotalScore] = useState<boolean>(false)
 
-  useEffect(() => {
-    getPartFile(
-      videoPath,
-      timeStampArr[recIndex].start,
-      timeStampArr[recIndex].end,
-    )
-  }, [])
+  const [isShowResult, setIsShowResult] = useState(false)
 
   useEffect(() => {
-    getPartFile(
-      videoPath,
-      timeStampArr[recIndex].start,
-      timeStampArr[recIndex].end,
-    )
-  }, [recIndex])
+    getPartFiles(videoPath, timeStampArr)
+  }, [])
 
   useEffect(() => {
     if (audioRef.current) {
@@ -114,6 +98,25 @@ export default function Dubbing({ mode }: DubbingProps) {
   }
 
   /**
+   * 녹음 완료 후 실행될 코드
+   * @param isCorrect
+   * @param duration
+   */
+  const onCompleteRecord = (isCorrect: boolean, duration: number) => {
+    // 정답일 때
+    setTimeout(() => {
+      if (isCorrect) {
+        playSound(audioList.launchSound, 0, 0.1)
+      } else {
+        playSound(audioList.powerDownSound, 0, 0.25)
+      }
+
+      setIsShowResult(true)
+      setTimeout(() => setIsShowResult(false), 2000)
+    }, duration)
+  }
+
+  /**
    * 녹음 시작
    */
   const startRecord = () => {
@@ -125,22 +128,6 @@ export default function Dubbing({ mode }: DubbingProps) {
         timeStampArr[recIndex].start,
         timeStampArr[recIndex].end,
         isWorking,
-        () => {
-          const recTime = 3000
-          // 정답일 때
-          setTimeout(() => {
-            playSound(refs.launchSoundRef, 0, 0.1)
-            setShowCorrect(true)
-            setTimeout(() => setShowCorrect(false), 2000)
-          }, recTime)
-
-          // 오답일 때
-          // playSound(refs.powerDownSoundRef, 0, 0.25)
-          // setShowIncorrect(true)
-          // setTimeout(() => {
-          //   setShowIncorrect(false)
-          // }, recTime)
-        },
       )
     }
   }
@@ -163,22 +150,50 @@ export default function Dubbing({ mode }: DubbingProps) {
     })
   }
 
-  const [showCorrect, setShowCorrect] = useState<boolean>(false)
-  const [showIncorrect, setShowIncorrect] = useState<boolean>(false)
+  /**
+   * 버튼 클릭 - 이전
+   */
+  const onClickPrev = () => {
+    if (!isWorking.current) {
+      const prevIndex = recIndex - 1
 
-  const { playSound, refs } = useSoundsContext()
+      if (prevIndex >= 0) {
+        setRecIndex(prevIndex)
+      } else {
+        setRecIndex(timeStampArr.length - 1)
+      }
+    }
+  }
+
+  /**
+   * 버튼 클릭 다음
+   */
+  const onClickNext = () => {
+    if (!isWorking.current) {
+      const nextIndex = recIndex + 1
+
+      if (timeStampArr.length > nextIndex) {
+        setRecIndex(nextIndex)
+      } else {
+        setRecIndex(0)
+      }
+    }
+  }
 
   return (
     <>
       <StyledDubStudio>
         <div className="sign">
-          {/* 싱글모드 일 때 */}
-          <img src={resDubSingleSign} alt="" draggable="false" height={80} />
-          {/* 풀모드 일 때 */}
-          {/* <img src={resDubFullSign} alt="" draggable="false" height={80} /> */}
+          {mode === 'single' ? (
+            <img src={resDubSingleSign} alt="" height={80} />
+          ) : (
+            <img src={resDubFullSign} alt="" height={80} />
+          )}
         </div>
+
         <div className="row-1st">
           <div className="graph-area">
+            {/* 실시간 사용자 */}
             {stream && (
               <LiveVisualizer
                 stream={stream}
@@ -186,10 +201,23 @@ export default function Dubbing({ mode }: DubbingProps) {
                   convertTimeToSec(timeStampArr[recIndex].end) -
                   convertTimeToSec(timeStampArr[recIndex].start)
                 }
+                color={'#42d7f5'}
               />
             )}
 
-            <Visualizer audioFile={partFile} color={'#fff'} />
+            {/* 원어민 */}
+            {partFiles && (
+              <Visualizer audioFile={partFiles[recIndex]} color={'#616161'} />
+            )}
+
+            {recFiles[recIndex] &&
+              recFiles[recIndex].index === recIndex &&
+              !stream && (
+                <Visualizer
+                  audioFile={recFiles[recIndex].file}
+                  color={'#fff'}
+                />
+              )}
           </div>
           <div className="dubbing-control-area">
             <div className="col-left">
@@ -200,12 +228,12 @@ export default function Dubbing({ mode }: DubbingProps) {
                   startRecord()
                 }}
               >
-                <img src={imgBtnRec} alt="" draggable="false" />
+                <img src={imgBtnRec} alt="" />
               </div>
 
               {/* 녹음된 문장 재생 */}
               <div className="btn-play btn-disabled">
-                <img src={imgBtnPlay} alt="" draggable="false" />
+                <img src={imgBtnPlay} alt="" />
               </div>
             </div>
 
@@ -213,24 +241,17 @@ export default function Dubbing({ mode }: DubbingProps) {
               {/* 이전 문장 보기 버튼 */}
               <div
                 className="btn-chev-left btn-disabled"
-                onClick={() => {
-                  setRecIndex(recIndex - 1)
-                }}
+                onClick={() => onClickPrev()}
               >
-                <img src={imgBtnLeft} alt="" draggable="false" />
+                <img src={imgBtnChevLeft} alt="" />
               </div>
 
               {/* 현재 문장 */}
               <div className="sentence">{timeStampArr[recIndex].text}</div>
 
               {/* 다음 문장 보기 버튼 */}
-              <div
-                className="btn-chev-right btn-disabled"
-                onClick={() => {
-                  setRecIndex(recIndex + 1)
-                }}
-              >
-                <img src={imgBtnRight} alt="" draggable="false" />
+              <div className="btn-chev-right" onClick={() => onClickNext()}>
+                <img src={imgBtnChevRight} alt="" />
               </div>
             </div>
 
@@ -242,7 +263,7 @@ export default function Dubbing({ mode }: DubbingProps) {
                   // setShowDubResult(true)
                 }}
               >
-                <img src={imgBtnSave} alt="" draggable="false" />
+                <img src={imgBtnSave} alt="" />
               </div>
             </div>
           </div>
@@ -266,7 +287,6 @@ export default function Dubbing({ mode }: DubbingProps) {
                       .split(' ')[0]
                       .toLowerCase()}1.png`}
                     alt=""
-                    draggable="false"
                   />
                 </div>
                 <div
@@ -283,9 +303,7 @@ export default function Dubbing({ mode }: DubbingProps) {
         </div>
       </StyledDubStudio>
 
-      {/* 녹음후 정오답 표시 */}
-      {showCorrect && <CorrectAction />}
-      {showIncorrect && <IncorrectAction />}
+      {isShowResult && <CorrectionResult isCorrect={true} />}
 
       <div style={{ display: 'none' }}>
         <AlertBox message="목록으로 나가시겠습니까?" />
@@ -294,15 +312,14 @@ export default function Dubbing({ mode }: DubbingProps) {
       {/* 토탈 스코어 보기 */}
       {showModalTotalScore && (
         <ModalTotalScore
+          checkIsReview={false}
+          thumbnail={''}
           dubDate="2025-05-30"
           level="KA"
           playTime="00:30"
           totalScore="50"
-          dubTime="00:30"
           dubSentence={30}
           dubWords={10}
-          checkIsReview={false}
-          thumbnail="src/assets/images/thumbnail/level_a/70100002.jpg"
         />
       )}
     </>

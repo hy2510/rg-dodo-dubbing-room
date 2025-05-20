@@ -10,20 +10,21 @@ import {
 import imgGraph from '@assets/images/common/sample-pentagon_graph.png'
 
 type ModalTotalScoreProps = {
+  checkIsReview: boolean
+  thumbnail: string
   dubDate?: string
   level?: string
   playTime?: string
   totalScore?: string
-  dubTime?: string
   dubSentence?: number
   dubWords?: number
   onClickClose?: () => void
   onClickFinish?: () => void
-  checkIsReview: boolean
-  thumbnail: string
 }
 
 export default function ModalTotalScore({
+  checkIsReview,
+  thumbnail,
   dubDate,
   level,
   playTime,
@@ -32,8 +33,6 @@ export default function ModalTotalScore({
   dubWords,
   onClickClose,
   onClickFinish,
-  checkIsReview,
-  thumbnail,
 }: ModalTotalScoreProps) {
   const [isReview, setIsReview] = useState<boolean>(false)
 
@@ -47,9 +46,9 @@ export default function ModalTotalScore({
         <div className="col-left">
           <div className="dub-info">
             <div className="row-1st">
-              <img src={thumbnail} alt="" draggable="false" />
-              {/* <video src={tempVideo} playsInline autoPlay loop controls /> */}
+              <img src={thumbnail} alt="" />
             </div>
+
             <div className="row-2nd">
               <div>더빙날짜</div>
               <div>{dubDate}</div>
@@ -57,17 +56,15 @@ export default function ModalTotalScore({
               <div>{level}</div>
               <div>영상시간</div>
               <div>{playTime}</div>
-              <div>문장 개수</div>
-              <div>{dubSentence}</div>
-              <div>단어 개수</div>
-              <div>{dubWords}</div>
             </div>
           </div>
         </div>
+
         <div className="col-right">
           <div className="row-1st">
             전체 스코어 <span>{totalScore}</span>점
           </div>
+
           {/* <div className="row-2nd">
             <div className="dub-info-item">
               <div className="dub-info-label">소요 시간</div>
@@ -82,15 +79,10 @@ export default function ModalTotalScore({
               <div className="dub-info-value">{dubWords}</div>
             </div>
           </div> */}
+
           <div className="row-3rd">
             {/* 여기에 펜타곤 그래프 삽입 */}
-            <img
-              src={imgGraph}
-              alt=""
-              width={'auto'}
-              height={'400px'}
-              draggable="false"
-            />
+            <img src={imgGraph} alt="" width={'auto'} height={'400px'} />
           </div>
         </div>
         {isReview ? (

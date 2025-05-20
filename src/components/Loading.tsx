@@ -1,10 +1,10 @@
-import { resLoading } from '@utils/Assets'
 import styled from 'styled-components'
+import { resLoading } from '@utils/Assets'
 
 export default function Loading() {
   return (
     <StyledLoading>
-      <img src={resLoading} alt="" draggable="false" />
+      <img src={resLoading} alt="" />
     </StyledLoading>
   )
 }

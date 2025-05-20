@@ -1,40 +1,73 @@
+import { useState } from 'react'
 import styled from 'styled-components'
-import { MainView } from 'src/App'
+
+import { useSoundContext } from '@contexts/SoundContext'
+
+import levelAData from '@assets/images/thumbnail/level_a/level_a_data.json'
+
+import { MainView } from '@pages/containers/WrapperContainer'
+
 import FrameListHeader from '@components/FrameListHeader'
 import { StyledListBoard } from '@components/main/ListBoard'
-import levelAData from '@assets/images/thumbnail/level_a/level_a_data.json'
-import { useState } from 'react'
-import MyReview from './MyReview'
-import { useSoundsContext } from '@contexts/SoundsContext'
+import Review from './Review'
 
 type MyMoviesProps = {
   changeMainView: (view: MainView) => void
-  onClick?: () => void
+  onClickBack: () => void
 }
 
 // 마이 무비 리스트
-export default function MyMovies({ onClick }: MyMoviesProps) {
+export default function MyMovies({
+  changeMainView,
+  onClickBack,
+}: MyMoviesProps) {
+  const { isBgmMute, audioList, playSound, pauseSound, resumeSound } =
+    useSoundContext()
+
   const [veiwMyMovieContents, setVeiwMyMovieContents] = useState<boolean>(false)
   const [movieUrl, setMovieUrl] = useState<string>('')
-  const { isBgmMute, playSound, refs, toggleBgMusic } = useSoundsContext()
+
+  /**
+   * Review 영상 보기
+   */
+  const onClickReview = () => {
+    if (!isBgmMute) {
+      // 기존에 브금이 꺼져있지 않다면
+      pauseSound(audioList.bgMusic)
+    }
+
+    playSound(audioList.menuTapSound, 0.25, 0.8)
+
+    setMovieUrl('src/assets/movies/70101001.mp4')
+    setVeiwMyMovieContents(true)
+  }
+
+  /**
+   * Review 화면에서 뒤로 가기
+   */
+  const onClickBackReview = () => {
+    if (!isBgmMute) {
+      // 기존에 브금이 꺼져있지 않다면
+      resumeSound(audioList.bgMusic)
+    }
+
+    setVeiwMyMovieContents(false)
+    setMovieUrl('')
+    playSound(audioList.menuTapSound, 0.25, 0.8)
+  }
 
   return (
     <StyledMyMovie>
-      <FrameListHeader title="My Movies" onClick={onClick} theme="movie" />
+      <FrameListHeader
+        title="My Movies"
+        onClickBack={onClickBack}
+        theme="movie"
+      />
 
       {/* 콘텐츠 리스트 */}
       <StyledListBoard>
         {levelAData.map((item, index) => (
-          <div
-            key={index}
-            className="thumbnail"
-            onClick={() => {
-              setVeiwMyMovieContents(true)
-              setMovieUrl('src/assets/movies/70101001.mp4')
-              playSound(refs.menuTapSoundRef, 0.25, 0.8)
-              !isBgmMute && toggleBgMusic()
-            }}
-          >
+          <div key={index} className="thumbnail" onClick={onClickReview}>
             <div className="completed-mark-box review">
               {/* 싱글모드 완료시 표시되는 마크 */}
               <div className="single-mark"></div>
@@ -47,22 +80,13 @@ export default function MyMovies({ onClick }: MyMoviesProps) {
             <img
               src={`src/assets/images/thumbnail/level_a/${item.image_name}`}
               alt={item.image_name}
-              draggable="false"
             />
           </div>
         ))}
       </StyledListBoard>
 
       {veiwMyMovieContents && (
-        <MyReview
-          onClickBack={() => {
-            setVeiwMyMovieContents(false)
-            setMovieUrl('')
-            playSound(refs.menuTapSoundRef, 0.25, 0.8)
-            !isBgmMute && toggleBgMusic()
-          }}
-          movieUrl={movieUrl}
-        />
+        <Review movieUrl={movieUrl} onClickBack={onClickBackReview} />
       )}
     </StyledMyMovie>
   )

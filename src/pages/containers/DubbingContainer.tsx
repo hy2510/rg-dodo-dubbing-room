@@ -1,57 +1,76 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useSoundContext } from '@contexts/SoundContext'
 
-import { MainView } from 'src/App'
+import { MainView } from '@pages/containers/WrapperContainer'
 
 import Rehearsal from '@pages/Rehearsal'
+import Dubbing from '@pages/Dubbing'
+
 import FrameBody from '@components/FrameBody'
 import BtnBackTitle from '@components/BtnBackTitle'
-import Dubbing from '@pages/Dubbing'
-import { useSoundsContext } from '@contexts/SoundsContext'
 
 type DubbingContainerProps = {
   changeMainView: (view: MainView) => void
 }
 
-export type DubbingViewProps = 'rehearsal' | 'speak'
+export type DubbingView = 'rehearsal' | 'speak'
 export type SpeakMode = 'single' | 'full'
+
+const timeStampArr = [
+  { text: 'Hey, guys!', cls: 'highlight', start: '00:00.5', end: '00:02.8' },
+  {
+    text: "Hello! What's your name?",
+    cls: 'hold',
+    start: '00:04.2',
+    end: '00:07.1',
+  },
+  { text: 'My name is Leoni.', cls: '', start: '00:08.2', end: '00:10.3' },
+]
 
 export default function DubbingContainer({
   changeMainView,
 }: DubbingContainerProps) {
-  const [dubbingView, setDubbingView] = useState<DubbingViewProps>('rehearsal')
-  const [speakMode, setSpeakMode] = useState<SpeakMode>('single')
-  const { isBgmMute, playSound, refs, toggleBgMusic } = useSoundsContext()
+  const { isBgmMute, audioList, resumeSound } = useSoundContext()
 
-  useEffect(() => {}, [dubbingView])
+  const [view, setView] = useState<DubbingView>('rehearsal')
+  const [mode, setMode] = useState<SpeakMode>('single')
 
-  const selectSpeakMode = (mode: SpeakMode) => {
-    setSpeakMode(mode)
-    setDubbingView('speak')
+  /**
+   * 버튼 클릭 - 뒤로 가기
+   */
+  const handleBackToMain = () => {
+    if (!isBgmMute) resumeSound(audioList.bgMusic)
+    changeMainView('main')
   }
 
-  let component
+  /**
+   * 버튼 클릭 - Let's Speak
+   * single / full 선택용
+   * @param selected single / full
+   */
+  const handleSelectMode = (selected: SpeakMode) => {
+    setMode(selected)
+    setView('speak')
+  }
 
-  switch (dubbingView) {
-    case 'rehearsal':
-      component = <Rehearsal selectSpeakMode={selectSpeakMode} />
-      break
-    case 'speak':
-      component = <Dubbing mode={speakMode} />
-      break
+  const renderView = () => {
+    switch (view) {
+      case 'rehearsal':
+        return (
+          <Rehearsal
+            timeStampArr={timeStampArr}
+            selectSpeakMode={handleSelectMode}
+          />
+        )
+      case 'speak':
+        return <Dubbing mode={mode} timeStampArr={timeStampArr} />
+    }
   }
 
   return (
     <FrameBody bgColor="#3B75FF">
-      <BtnBackTitle
-        title="Alligator's Apples"
-        onClick={() => {
-          changeMainView('main')
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
-          !isBgmMute && toggleBgMusic()
-        }}
-      />
-
-      {component}
+      <BtnBackTitle title="Alligator's Apples" onClick={handleBackToMain} />
+      {renderView()}
     </FrameBody>
   )
 }

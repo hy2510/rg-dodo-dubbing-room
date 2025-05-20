@@ -7,13 +7,13 @@ import {
 } from '@utils/Assets'
 
 type ModalGuideProps = {
-  onClickClose: () => void
   videoUrl: string
+  onClickClose: () => void
 }
 
 export default function ModalGuide({
-  onClickClose,
   videoUrl,
+  onClickClose,
 }: ModalGuideProps) {
   return (
     <>

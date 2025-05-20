@@ -1,5 +1,6 @@
-import { useSoundsContext } from '@contexts/SoundsContext'
 import styled from 'styled-components'
+
+import { useSoundContext } from '@contexts/SoundContext'
 
 import {
   resRotatingSign,
@@ -14,22 +15,23 @@ import {
   imgBtnMyRoom,
   imgBtnMyRoomAct,
   resPlatform,
+  imgBtnExitReview,
+  imgBtnMute,
+  imgBtnNoMute,
 } from '@utils/Assets'
 
 type IntroProps = {
-  onBgmMuteClick: () => void
-  onGuideClick: () => void
-  onStartClick: () => void
-  onMyMovieClick: () => void
+  onClickGuide: () => void
+  onClickStart: () => void
+  onClickMyMovie: () => void
 }
 
 export default function Intro({
-  onBgmMuteClick,
-  onGuideClick,
-  onStartClick,
-  onMyMovieClick,
+  onClickGuide,
+  onClickStart,
+  onClickMyMovie,
 }: IntroProps) {
-  const { isBgmMute, playSound, refs } = useSoundsContext()
+  const { isBgmMute, audioList, playSound, toggleBGM } = useSoundContext()
 
   return (
     <StyledIntro>
@@ -37,9 +39,10 @@ export default function Intro({
         <div className="btn-exit" />
         <div
           className={`btn-mute ${isBgmMute ? 'on' : ''}`}
-          onClick={onBgmMuteClick}
+          onClick={() => toggleBGM()}
         />
       </div>
+
       <div className="rotating-sign">
         <object type="image/svg+xml" data={resRotatingSign} width="100%" />
       </div>
@@ -55,22 +58,19 @@ export default function Intro({
       <div
         className="btn-guide"
         onClick={() => {
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
-          setTimeout(onGuideClick, 300)
+          setTimeout(onClickGuide, 300)
         }}
       />
       <div
         className="btn-start"
         onClick={() => {
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
-          onStartClick()
+          onClickStart()
         }}
       />
       <div
         className="btn-my-movie"
         onClick={() => {
-          playSound(refs.menuTapSoundRef, 0.25, 0.8)
-          onMyMovieClick()
+          onClickMyMovie()
         }}
       />
       <div className="platform">
@@ -82,8 +82,7 @@ export default function Intro({
   )
 }
 
-// ========== Styled Components ==========
-
+// Styled
 const StyledIntro = styled.div`
   width: 100%;
   height: 100%;
@@ -111,15 +110,15 @@ const StyledIntro = styled.div`
     }
 
     .btn-mute {
-      background-image: url('src/assets/images/home/btn-mute_n.svg');
+      background-image: url(${'"' + imgBtnMute + '"'});
 
       &.on {
-        background-image: url('src/assets/images/home/btn-mute_y.svg');
+        background-image: url(${'"' + imgBtnNoMute + '"'});
       }
     }
 
     .btn-exit {
-      background-image: url('src/assets/images/home/btn-exit.svg');
+      background-image: url(${'"' + imgBtnExitReview + '"'});
     }
   }
 
@@ -182,9 +181,9 @@ const StyledIntro = styled.div`
     bottom: 77px;
     width: 165.5px;
     height: 112px;
-    background-image: url(${imgBtnGuide});
+    background-image: url(${'"' + imgBtnGuide + '"'});
     &:active {
-      background-image: url(${imgBtnGuideAct});
+      background-image: url(${'"' + imgBtnGuideAct + '"'});
     }
   }
 
@@ -193,9 +192,9 @@ const StyledIntro = styled.div`
     bottom: 65px;
     width: 226px;
     height: 136px;
-    background-image: url(${imgBtnStart});
+    background-image: url(${'"' + imgBtnStart + '"'});
     &:active {
-      background-image: url(${imgBtnStartAct});
+      background-image: url(${'"' + imgBtnStartAct + '"'});
     }
   }
 
@@ -204,9 +203,9 @@ const StyledIntro = styled.div`
     bottom: 66px;
     width: 168px;
     height: 136px;
-    background-image: url(${imgBtnMyRoom});
+    background-image: url(${'"' + imgBtnMyRoom + '"'});
     &:active {
-      background-image: url(${imgBtnMyRoomAct});
+      background-image: url(${'"' + imgBtnMyRoomAct + '"'});
     }
   }
 

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import {
@@ -12,8 +13,8 @@ import {
   resTxtFullMode,
 } from '@utils/Assets'
 import { SpeakMode } from '@pages/containers/DubbingContainer'
-import { useSoundsContext } from '@contexts/SoundsContext'
-import { useState } from 'react'
+
+import { useSoundContext } from '@contexts/SoundContext'
 
 type ModalSelectModeProps = {
   selectSpeakMode: (mode: SpeakMode) => void
@@ -24,32 +25,35 @@ export default function ModalSelectMode({
   selectSpeakMode,
   onClickClose,
 }: ModalSelectModeProps) {
-  const { playSound, refs } = useSoundsContext()
+  const { audioList, playSound } = useSoundContext()
 
   const [singleAction, setSingleAction] = useState<string>(imgBtnSingleMode)
   const [fullAction, setFullAction] = useState(imgBtnFullMode)
 
+  /**
+   *
+   */
   const handleClose = () => {
     onClickClose?.()
-    playSound(refs.closeTapSoundRef)
+    playSound(audioList.closeTapSound)
   }
 
-  const handleSelectSingle = () => {
-    playSound(refs.menuTapSoundRef, 0.25, 0.8)
-    setSingleAction(imgBtnSingleModeAction)
+  /**
+   * 녹음 모드 선택
+   * @param mode
+   */
+  const handleSelectMode = (mode: 'single' | 'full') => {
+    playSound(audioList.menuTapSound, 0.25, 0.8)
+
+    if (mode === 'single') {
+      setSingleAction(imgBtnSingleModeAction)
+    } else {
+      setFullAction(imgBtnFullModeAction)
+    }
 
     setTimeout(() => {
-      selectSpeakMode('single')
-    }, 3000)
-  }
-
-  const handleSelectFullCast = () => {
-    playSound(refs.menuTapSoundRef, 0.25, 0.8)
-    setFullAction(imgBtnFullModeAction)
-
-    setTimeout(() => {
-      selectSpeakMode('full')
-    }, 3000)
+      selectSpeakMode(mode)
+    }, 1500)
   }
 
   return (
@@ -59,12 +63,12 @@ export default function ModalSelectMode({
           <StyledModeButton
             txtImage={resTxtSingleMode}
             image={singleAction}
-            onClick={() => handleSelectSingle()}
+            onClick={() => handleSelectMode('single')}
           />
           <StyledModeButton
             txtImage={resTxtFullMode}
             image={fullAction}
-            onClick={() => handleSelectFullCast()}
+            onClick={() => handleSelectMode('full')}
           />
         </div>
         <StyledCloseButton onClick={handleClose} />
@@ -82,7 +86,6 @@ const tapHighlightNone = css`
 
 const activeEffect = css`
   &:active {
-    /* transform: scale(0.95); */
     opacity: 0.9;
   }
 `

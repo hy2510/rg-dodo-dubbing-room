@@ -10,7 +10,6 @@ type BtnBackTitleProps = {
 }
 
 export default function BtnBackTitle({ title, onClick }: BtnBackTitleProps) {
-  console.log(imgBtnArrowRight)
   return (
     <StyledBtnBackTitle onClick={onClick}>
       <RoundedFont />

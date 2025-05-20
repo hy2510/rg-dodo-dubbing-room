@@ -13,23 +13,23 @@ import { RoundedFont } from '@stylesheets/GlobalStyle'
 import BtnBackTitle from '@components/BtnBackTitle'
 
 type FrameListHeaderProps = {
+  theme?: 'content' | 'movie'
   title?: string
   point?: number
-  onClick?: () => void
-  theme?: 'content' | 'movie'
+  onClickBack?: () => void
 }
 
 export default function FrameListHeader({
+  theme,
   title,
   point,
-  onClick,
-  theme,
+  onClickBack,
 }: FrameListHeaderProps) {
   return (
     <StyledListHeader>
       <RoundedFont />
       <StyledPointsDisplay>{point ? point : 0}</StyledPointsDisplay>
-      <BtnBackTitle title={title} onClick={onClick} />
+      <BtnBackTitle title={title} onClick={onClickBack} />
       <StyledDodoSing>
         {theme === 'content' ? (
           <object data={resSingDodoAni} type="image/svg+xml" width="100%" />
@@ -113,7 +113,6 @@ const StyledDodoSing = styled.div`
   bottom: -10px;
   width: 418.74px;
   height: 196.02px;
-  /* background-image: url(${resSingDodo}); */
   background-size: 100%;
   background-repeat: no-repeat;
   z-index: 1;

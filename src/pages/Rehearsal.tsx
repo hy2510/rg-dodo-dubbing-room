@@ -6,25 +6,40 @@ import { resSpeakers, bgContentsArea, imgBtnSpeak } from '@utils/Assets'
 import tempVideo from '@assets/movies/70101001.mp4'
 
 import ModalSelectMode from '@components/modals/ModalSelectMode'
-import { SpeakMode } from './containers/DubbingContainer'
+import { SpeakMode } from '@pages/containers/DubbingContainer'
 import { StyledSpeechBubble } from '@components/dubbing/SpeechBubble'
-import { useSoundsContext } from '@contexts/SoundsContext'
 
 type RehearsalProps = {
+  timeStampArr: {
+    text: string
+    cls: string
+    start: string
+    end: string
+  }[]
   selectSpeakMode: (mode: SpeakMode) => void
 }
 
-export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
+export default function Rehearsal({
+  timeStampArr,
+  selectSpeakMode,
+}: RehearsalProps) {
   const [viewSelectMode, setViewSelectMode] = useState<boolean>(false)
-
-  const { playSound, refs } = useSoundsContext()
 
   return (
     <>
       <StyledDubRehearsal>
         <div className="row-1st">
           <div className="col-left">
-            <video src={tempVideo} playsInline autoPlay loop controls />
+            <video
+              src={tempVideo}
+              playsInline
+              autoPlay
+              controls
+              onTimeUpdate={(e) => {
+                if (e.currentTarget.currentTime) {
+                }
+              }}
+            />
           </div>
 
           <div className="col-right">
@@ -66,7 +81,6 @@ export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
                   <img
                     src={`src/assets/images/character/${imgSrc}.png`}
                     alt=""
-                    draggable="false"
                   />
                 </div>
                 <div className="text-box">{text}</div>
@@ -79,7 +93,6 @@ export default function Rehearsal({ selectSpeakMode }: RehearsalProps) {
             className="btn-start"
             onClick={() => {
               setViewSelectMode(true)
-              playSound(refs.menuTapSoundRef, 0.25, 0.8)
             }}
           >
             Let's Speak

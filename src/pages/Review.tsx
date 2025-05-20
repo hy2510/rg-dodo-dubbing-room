@@ -1,8 +1,11 @@
-import styled from 'styled-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import ModalTotalScore from '@components/modals/ModalTotalScore'
-import { useIsMobile } from '@hooks/useIsMobile'
+
+import styled from 'styled-components'
 import { RoundedFont } from '@stylesheets/GlobalStyle'
+
+import { useSoundContext } from '@contexts/SoundContext'
+import { useIsMobile } from '@hooks/useIsMobile'
+
 import {
   imgBtnExitReview,
   imgBtnGoTotalScore,
@@ -12,14 +15,15 @@ import {
   imgBtnVolumeOn,
   resCaption,
 } from '@utils/Assets'
-import { useSoundsContext } from '@contexts/SoundsContext'
+
+import ModalTotalScore from '@components/modals/ModalTotalScore'
 
 type MyReviewProps = {
-  onClickBack: () => void
   movieUrl: string
+  onClickBack: () => void
 }
 
-export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
+export default function Review({ movieUrl, onClickBack }: MyReviewProps) {
   const [showTotalScore, setShowTotalScore] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [progress, setProgress] = useState(0)
@@ -29,13 +33,13 @@ export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
   const [hideButton, setHideButton] = useState(false)
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const { playSound, refs } = useSoundsContext()
+  const { audioList, playSound } = useSoundContext()
 
   // 모바일 여부 체크
   const isMobile = useIsMobile()
 
   const toggleMute = () => {
-    playSound(refs.closeTapSoundRef)
+    playSound(audioList.closeTapSound)
 
     if (!videoRef.current) return
     videoRef.current.muted = !videoRef.current.muted
@@ -43,7 +47,7 @@ export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
   }
 
   const togglePlay = () => {
-    playSound(refs.closeTapSoundRef)
+    playSound(audioList.closeTapSound)
 
     if (!videoRef.current) return
 
@@ -71,7 +75,7 @@ export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
 
   const toggleCaption = () => {
     showCaption ? setShowCaption(false) : setShowCaption(true)
-    playSound(refs.closeTapSoundRef)
+    playSound(audioList.closeTapSound)
   }
 
   const showControls = useCallback(() => {
@@ -145,16 +149,16 @@ export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
           <div style={{ display: hideButton ? 'none' : 'block' }}>
             <div className="top-buttons">
               <div className="btn-go-list" onClick={onClickBack}>
-                <img src={imgBtnExitReview} alt="" draggable="false" />
+                <img src={imgBtnExitReview} alt="" />
               </div>
               <div
                 className="btn-go-total-score"
                 onClick={() => {
                   setShowTotalScore(true)
-                  playSound(refs.menuTapSoundRef, 0.25, 0.8)
+                  playSound(audioList.menuTapSound, 0.25, 0.8)
                 }}
               >
-                <img src={imgBtnGoTotalScore} alt="" draggable="false" />
+                <img src={imgBtnGoTotalScore} alt="" />
               </div>
             </div>
 
@@ -171,32 +175,22 @@ export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
               <div className="buttons">
                 <button onClick={toggleMute} className="btn-mute">
                   {isMuted ? (
-                    <img src={imgBtnVolumeOff} draggable="false" width={50} />
+                    <img src={imgBtnVolumeOff} width={50} />
                   ) : (
-                    <img src={imgBtnVolumeOn} draggable="false" width={50} />
+                    <img src={imgBtnVolumeOn} width={50} />
                   )}
                 </button>
 
                 <button onClick={togglePlay} className="btn-play">
                   {isPlaying ? (
-                    <img
-                      src={imgBtnPause}
-                      alt=""
-                      draggable="false"
-                      width={60}
-                    />
+                    <img src={imgBtnPause} alt="" width={60} />
                   ) : (
-                    <img
-                      src={imgBtnPlayMovie}
-                      alt=""
-                      draggable="false"
-                      width={60}
-                    />
+                    <img src={imgBtnPlayMovie} alt="" width={60} />
                   )}
                 </button>
 
                 <button className="btn-caption" onClick={toggleCaption}>
-                  <img src={resCaption} alt="" draggable="false" width={40} />
+                  <img src={resCaption} alt="" width={40} />
                   <span>{showCaption ? 'On' : 'Off'}</span>
                 </button>
               </div>
@@ -210,7 +204,6 @@ export default function MyReview({ onClickBack, movieUrl }: MyReviewProps) {
             level="KA"
             playTime="00:30"
             totalScore="50"
-            dubTime="00:30"
             dubSentence={30}
             dubWords={10}
             checkIsReview={true}

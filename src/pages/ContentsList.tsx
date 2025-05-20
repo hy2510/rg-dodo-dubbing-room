@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 
-import { MainView } from 'src/App'
+import { MainView } from '@pages/containers/WrapperContainer'
+import { useSoundContext } from '@contexts/SoundContext'
 
 import {
   imgBtnTabLevelA,
@@ -15,14 +16,13 @@ import {
 import { StyledTabBar } from '@components/main/TabBar'
 import { StyledTags } from '@components/main/Tags'
 import { StyledListBoard } from '@components/main/ListBoard'
+import FrameListHeader from '@components/FrameListHeader'
 
 import levelAData from '@assets/images/thumbnail/level_a/level_a_data.json'
-import FrameListHeader from '@components/FrameListHeader'
-import { useSoundsContext } from '@contexts/SoundsContext'
 
 type DubContentsListProps = {
   changeMainView: (view: MainView) => void
-  onClick?: () => void
+  onClickBack: () => void
 }
 
 type LevelList = 'level_a' | 'level_b' | 'level_c'
@@ -30,83 +30,95 @@ type TagList = 'All' | 'Emotion' | 'Greeting'
 
 export default function ContentsList({
   changeMainView,
-  onClick,
+  onClickBack,
 }: DubContentsListProps) {
+  const { isBgmMute, audioList, playSound, pauseSound } = useSoundContext()
   const [currentTabView, setCurrentTabView] = useState<LevelList>('level_a')
+  const [currentTagView, setCurrentTagView] = useState<TagList>('All')
 
-  const [currentTagView, setCurrentTagView] = useState('All')
   const levelList: LevelList[] = ['level_a', 'level_b', 'level_c']
   const tagList: TagList[] = ['All', 'Emotion', 'Greeting']
 
-  const { isBgmMute, playSound, refs, toggleBgMusic } = useSoundsContext()
+  const levelImgMap = useMemo(
+    () => ({
+      level_a: { on: imgBtnTabLevelAOn, off: imgBtnTabLevelA },
+      level_b: { on: imgBtnTabLevelBOn, off: imgBtnTabLevelB },
+      level_c: { on: imgBtnTabLevelCOn, off: imgBtnTabLevelC },
+    }),
+    [],
+  )
 
-  const renderTabItem = (level: LevelList) => {
-    const isActive = currentTabView === level
-    let imageComponent
+  /**
+   * 버튼 클릭 - Level A/B/C
+   */
+  const handleChangeLevel = useCallback(
+    (level: LevelList) => {
+      if (level !== currentTabView) {
+        playSound(audioList.closeTapSound)
 
-    switch (level) {
-      case 'level_a':
-        imageComponent = isActive ? (
-          <img src={imgBtnTabLevelAOn} draggable="false" alt="" />
-        ) : (
-          <img src={imgBtnTabLevelA} draggable="false" alt="" />
-        )
-        break
-      case 'level_b':
-        imageComponent = isActive ? (
-          <img src={imgBtnTabLevelBOn} draggable="false" alt="" />
-        ) : (
-          <img src={imgBtnTabLevelB} draggable="false" alt="" />
-        )
-        break
-      case 'level_c':
-        imageComponent = isActive ? (
-          <img src={imgBtnTabLevelCOn} draggable="false" alt="" />
-        ) : (
-          <img src={imgBtnTabLevelC} draggable="false" alt="" />
-        )
-        break
-    }
+        setCurrentTabView(level)
+      }
+    },
+    [currentTabView, playSound, audioList.closeTapSound],
+  )
 
-    return (
-      <div
-        key={level}
-        className="tab-menu-item"
-        onClick={() => {
-          if (!isActive) {
-            setCurrentTabView(level)
-            playSound(refs.closeTapSoundRef)
-          }
-        }}
-      >
-        {imageComponent}
-      </div>
-    )
-  }
+  /**
+   * 버튼 클릭 - Tag
+   */
+  const handleChangeTag = useCallback(
+    (tag: TagList) => {
+      playSound(audioList.closeTapSound)
+
+      setCurrentTagView(tag)
+    },
+    [playSound, audioList.closeTapSound],
+  )
+
+  /**
+   * 버튼 클릭 - Contents
+   */
+  const handleClickContent = useCallback(() => {
+    if (!isBgmMute) pauseSound(audioList.bgMusic)
+
+    playSound(audioList.menuTapSound, 0.25, 0.8)
+
+    changeMainView('dubbing')
+  }, [changeMainView, playSound, pauseSound, isBgmMute, audioList])
 
   return (
     <StyledDubContentsList>
       <FrameListHeader
         title="DODO’s Dubbing Room"
-        onClick={onClick}
         theme="content"
+        onClickBack={onClickBack}
       />
 
       {/* 레벨 셀렉터 */}
       <StyledTabBar>
-        {levelList.map((level) => renderTabItem(level))}
+        {levelList.map((level) => {
+          const isActive = currentTabView === level
+          const imgSrc = isActive
+            ? levelImgMap[level].on
+            : levelImgMap[level].off
+          return (
+            <div
+              key={level}
+              className="tab-menu-item"
+              onClick={() => handleChangeLevel(level)}
+            >
+              <img src={imgSrc} alt={level} />
+            </div>
+          )
+        })}
       </StyledTabBar>
 
-      {/* 콘텐츠 태그 셀렉터 */}
+      {/* 태그 필터 */}
       <StyledTags>
-        {tagList.map((tag: TagList) => (
+        {tagList.map((tag) => (
           <div
             key={tag}
-            className={`tag-item ${currentTagView == tag ? 'active' : ''}`}
-            onClick={() => {
-              setCurrentTagView(tag)
-              playSound(refs.closeTapSoundRef)
-            }}
+            className={`tag-item ${currentTagView === tag ? 'active' : ''}`}
+            onClick={() => handleChangeTag(tag)}
           >
             {tag}
           </div>
@@ -116,28 +128,14 @@ export default function ContentsList({
       {/* 콘텐츠 리스트 */}
       <StyledListBoard>
         {levelAData.map((item, index) => (
-          <div
-            key={index}
-            className="thumbnail"
-            onClick={() => {
-              changeMainView('dubbing')
-              playSound(refs.menuTapSoundRef, 0.25, 0.8)
-              !isBgmMute && toggleBgMusic()
-            }}
-          >
-            <div className="completed-mark-box ">
-              {/* 싱글모드 완료시 표시되는 마크 */}
-              <div className="single-mark"></div>
-
-              {/* 풀캐스트모드 완료시 표시되는 마크 */}
-              <div className="full-mark"></div>
+          <div key={index} className="thumbnail" onClick={handleClickContent}>
+            <div className="completed-mark-box">
+              <div className="single-mark" />
+              <div className="full-mark" />
             </div>
-
-            {/* 썸네일 이미지 */}
             <img
               src={`src/assets/images/thumbnail/level_a/${item.image_name}`}
               alt={item.image_name}
-              draggable="false"
             />
           </div>
         ))}

@@ -1,27 +1,29 @@
 import styled from 'styled-components'
 
-export function CorrectAction() {
+import { resSignCorrectRocket, resSignIncorrectRocket } from '@utils/Assets'
+
+type CorrectionResultProps = {
+  isCorrect: boolean
+}
+
+function CorrectAction() {
   return (
     <StyledCorrectAction>
-      <img
-        src="src/assets/images/dubbing/res-sign_correct_rocket.svg"
-        alt=""
-        height={720}
-      />
+      <img src={resSignCorrectRocket} alt="" height={720} />
     </StyledCorrectAction>
   )
 }
 
-export function IncorrectAction() {
+function IncorrectAction() {
   return (
     <StyledIorrectAction>
-      <img
-        src="src/assets/images/dubbing/res-sign_incorrect_rocket.svg"
-        alt=""
-        height={720}
-      />
+      <img src={resSignIncorrectRocket} alt="" height={720} />
     </StyledIorrectAction>
   )
+}
+
+export default function CorrectionResult({ isCorrect }: CorrectionResultProps) {
+  return isCorrect ? <CorrectAction /> : <IncorrectAction />
 }
 
 // ========== Styled Components ==========

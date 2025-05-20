@@ -23,6 +23,7 @@ export default function Visualizer({ audioFile, color = '#ffffff' }: Props) {
       const dpr = window.devicePixelRatio || 1
       const width = canvas.offsetWidth
       const height = canvas.offsetHeight
+
       canvas.width = width * dpr
       canvas.height = height * dpr
       ctx.scale(dpr, dpr)
@@ -31,6 +32,7 @@ export default function Visualizer({ audioFile, color = '#ffffff' }: Props) {
       // --- 3) 블록별 RMS 진폭 계산
       const blockSize = Math.floor(rawData.length / width)
       const amps: number[] = new Array(width)
+
       for (let i = 0; i < width; i++) {
         let sumSq = 0
         const offset = i * blockSize
@@ -48,16 +50,20 @@ export default function Visualizer({ audioFile, color = '#ffffff' }: Props) {
       // --- 5) 넓은 이동 평균(windowSize)으로 부드럽게
       const windowSize = 15 // ← 이 값을 키우면 정상부가 더 플랫해집니다
       const smooth: number[] = new Array(width)
+
       for (let i = 0; i < width; i++) {
         let sum = 0,
           count = 0
+
         for (let dx = -windowSize; dx <= windowSize; dx++) {
           const idx = i + dx
+
           if (idx >= 0 && idx < width) {
             sum += norm[idx]
             count++
           }
         }
+
         smooth[i] = sum / count
       }
 
@@ -65,12 +71,11 @@ export default function Visualizer({ audioFile, color = '#ffffff' }: Props) {
       ctx.beginPath()
       ctx.lineWidth = 2
       ctx.strokeStyle = color
-      ctx.lineJoin = 'round'
-      ctx.lineCap = 'round'
 
       for (let i = 0; i < width; i++) {
         const x = i
         const y = height * (1 - smooth[i])
+
         if (i === 0) {
           ctx.moveTo(x, y)
         } else {
@@ -96,7 +101,6 @@ export default function Visualizer({ audioFile, color = '#ffffff' }: Props) {
         width: '100%',
         height: '100%',
         borderRadius: 8,
-        backgroundColor: 'transparent',
       }}
     />
   )

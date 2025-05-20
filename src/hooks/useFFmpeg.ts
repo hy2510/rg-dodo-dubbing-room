@@ -8,7 +8,7 @@ const BASE_URL = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm'
 
 export default function useFFmpeg() {
   const [outputFile, setOutputFile] = useState('')
-  const [partFile, setPartFile] = useState<File | null>(null)
+  const [partFiles, setPartFiles] = useState<File[] | null>(null)
 
   const ffmpegRef = useRef(new FFmpeg())
   const ffmpeg = ffmpegRef.current
@@ -107,7 +107,15 @@ export default function useFFmpeg() {
    * 비디오에서 부분 음원 얻기
    * @param videoPath
    */
-  const getPartFile = async (videoPath: string, start: string, end: string) => {
+  const getPartFiles = async (
+    videoPath: string,
+    timeStampArr: {
+      text: string
+      cls: string
+      start: string
+      end: string
+    }[],
+  ) => {
     try {
       await loadFFmpeg()
 
@@ -118,20 +126,31 @@ export default function useFFmpeg() {
         // 오디오와 비디오 분리
         await splitAudio()
 
-        //
-        await sliceAudio(start, end, `part.mp3`)
+        const files = []
 
-        const data = await ffmpeg.readFile('part.mp3')
-        // @ts-ignore
-        const file = new File([data.buffer], 'part.mp3', {
-          type: 'audio/mp3',
-        })
+        for (let i = 0; i < timeStampArr.length; i++) {
+          const start = timeStampArr[i].start
+          const end = timeStampArr[i].end
 
-        setPartFile(file)
+          await sliceAudio(start, end, `part${i + 1}.mp3`)
+
+          const data = await ffmpeg.readFile(`part${i + 1}.mp3`)
+          // @ts-ignore
+          const file = new File([data.buffer], `part${i + 1}.mp3`, {
+            type: 'audio/mp3',
+          })
+
+          files.push(file)
+        }
+
+        setPartFiles(files)
 
         await ffmpeg.deleteFile('video.mp4')
         await ffmpeg.deleteFile('audio.mp3')
-        await ffmpeg.deleteFile('part.mp3')
+
+        for (let i = 0; i < timeStampArr.length; i++) {
+          await ffmpeg.deleteFile(`part${i + 1}.mp3`)
+        }
       }
     } catch (error) {
       console.log(error)
@@ -246,5 +265,5 @@ export default function useFFmpeg() {
     return match ? match[0] : '.webm' // fallback 확장자
   }
 
-  return { outputFile, partFile, trans, getPartFile }
+  return { outputFile, partFiles, trans, getPartFiles }
 }
