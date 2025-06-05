@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { useSoundContext } from '@contexts/SoundContext'
 
 import {
-  resRotatingSign,
   resMixingConsole,
   resDodo,
   resSynth,
@@ -18,6 +17,10 @@ import {
   imgBtnExitReview,
   imgBtnMute,
   imgBtnNoMute,
+  resRotatingSign2,
+  resBaro,
+  resChello,
+  resMillio,
 } from '@utils/Assets'
 
 type IntroProps = {
@@ -31,7 +34,7 @@ export default function Intro({
   onClickStart,
   onClickMyMovie,
 }: IntroProps) {
-  const { isBgmMute, audioList, playSound, toggleBGM } = useSoundContext()
+  const { isBgmMute, toggleBGM } = useSoundContext()
 
   return (
     <StyledIntro>
@@ -44,13 +47,22 @@ export default function Intro({
       </div>
 
       <div className="rotating-sign">
-        <object type="image/svg+xml" data={resRotatingSign} width="100%" />
+        <object type="image/svg+xml" data={resRotatingSign2} width="100%" />
       </div>
       <div className="mixing-console">
         <object type="image/svg+xml" data={resMixingConsole} width="100%" />
       </div>
       <div className="dodo">
         <object type="image/svg+xml" data={resDodo} width="100%" />
+      </div>
+      <div className="baro">
+        <object type="image/svg+xml" data={resBaro} width="100%" />
+      </div>
+      <div className="chello">
+        <object type="image/svg+xml" data={resChello} width="100%" />
+      </div>
+      <div className="millo">
+        <object type="image/svg+xml" data={resMillio} width="100%" />
       </div>
       <div className="synth">
         <object type="image/svg+xml" data={resSynth} width="100%" />
@@ -125,6 +137,9 @@ const StyledIntro = styled.div`
   .rotating-sign,
   .mixing-console,
   .dodo,
+  .baro,
+  .chello,
+  .millo,
   .synth,
   .btn-guide,
   .btn-start,
@@ -156,6 +171,30 @@ const StyledIntro = styled.div`
     left: 490px;
     bottom: 160px;
     width: 290px;
+    height: fit-content;
+    z-index: 2;
+  }
+
+  .baro {
+    left: 128px;
+    bottom: 58px;
+    width: 130px;
+    height: fit-content;
+    z-index: 2;
+  }
+
+  .chello {
+    left: 305px;
+    bottom: 186px;
+    width: 110px;
+    height: fit-content;
+    z-index: 1;
+  }
+
+  .millo {
+    right: 157px;
+    bottom: 66px;
+    width: 130px;
     height: fit-content;
     z-index: 2;
   }

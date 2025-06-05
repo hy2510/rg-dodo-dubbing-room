@@ -70,15 +70,20 @@ import resPlatformRing from '@assets/images/home/res-platform_ring.svg'
 import resRocketGo from '@assets/images/home/res-rocket-go.svg'
 import resRocketStop from '@assets/images/home/res-rocket-stop.svg'
 import resRotatingSign from '@assets/images/home/res-rotating_sign.svg'
+import resRotatingSign2 from '@assets/images/home/res-rotating_sign2.svg'
 import resSignCorrectRocket from '@assets/images/dubbing/res-sign_correct_rocket.svg'
 import resSignIncorrectRocket from '@assets/images/dubbing/res-sign_incorrect_rocket.svg'
 import resSingDodo from '@assets/images/common/res-sing_dodo.png'
+import resBaro from '@assets/images/home/res-character_baro.svg'
+import resChello from '@assets/images/home/res-character_chello.svg'
+import resMillio from '@assets/images/home/res-character_millo.svg'
 import resSingDodoAni from '@assets/images/home/res-conent_list_top.svg'
 import resSpeakers from '@assets/images/dubbing/res-speakers.png'
 import resSynth from '@assets/images/home/res-synth.svg'
 import resTxtFullMode from '@assets/images/common/res-text_fullcast_mode.png'
 import resTxtSingleMode from '@assets/images/common/res-text_single_mode.png'
 import resWatchDodoAni from '@assets/images/my-movies/res-my_movies_top.svg'
+import resEmptyMessage from '@assets/images/my-movies/res-empty_message.svg'
 
 export {
   // Backgrounds
@@ -153,13 +158,18 @@ export {
   resRocketGo,
   resRocketStop,
   resRotatingSign,
+  resRotatingSign2,
   resSignCorrectRocket,
   resSignIncorrectRocket,
   resSingDodo,
   resSingDodoAni,
+  resBaro,
+  resChello,
+  resMillio,
   resSpeakers,
   resSynth,
   resTxtFullMode,
   resTxtSingleMode,
   resWatchDodoAni,
+  resEmptyMessage,
 }

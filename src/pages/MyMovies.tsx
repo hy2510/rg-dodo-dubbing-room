@@ -10,6 +10,7 @@ import { MainView } from '@pages/containers/WrapperContainer'
 import FrameListHeader from '@components/FrameListHeader'
 import { StyledListBoard } from '@components/main/ListBoard'
 import Review from './Review'
+import { resEmptyMessage } from '@utils/Assets'
 
 type MyMoviesProps = {
   changeMainView: (view: MainView) => void
@@ -65,25 +66,32 @@ export default function MyMovies({
       />
 
       {/* 콘텐츠 리스트 */}
-      <StyledListBoard>
-        {levelAData.map((item, index) => (
-          <div key={index} className="thumbnail" onClick={onClickReview}>
-            <div className="completed-mark-box review">
-              {/* 싱글모드 완료시 표시되는 마크 */}
-              <div className="single-mark"></div>
+      <div style={{ display: 'none' }}>
+        <StyledListBoard>
+          {levelAData.map((item, index) => (
+            <div key={index} className="thumbnail" onClick={onClickReview}>
+              <div className="completed-mark-box review">
+                {/* 싱글모드 완료시 표시되는 마크 */}
+                <div className="single-mark"></div>
 
-              {/* 풀캐스트모드 완료시 표시되는 마크 */}
-              <div className="full-mark"></div>
+                {/* 풀캐스트모드 완료시 표시되는 마크 */}
+                <div className="full-mark"></div>
+              </div>
+
+              {/* 썸네일 이미지 */}
+              <img
+                src={`src/assets/images/thumbnail/level_a/${item.image_name}`}
+                alt={item.image_name}
+              />
             </div>
+          ))}
+        </StyledListBoard>
+      </div>
 
-            {/* 썸네일 이미지 */}
-            <img
-              src={`src/assets/images/thumbnail/level_a/${item.image_name}`}
-              alt={item.image_name}
-            />
-          </div>
-        ))}
-      </StyledListBoard>
+      {/* empty 메세지 */}
+      <div className="empty-message">
+        <img src={resEmptyMessage} alt="empty-message" />
+      </div>
 
       {veiwMyMovieContents && (
         <Review movieUrl={movieUrl} onClickBack={onClickBackReview} />
@@ -105,5 +113,17 @@ const StyledMyMovie = styled.div`
 
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  .empty-message {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    img {
+      width: 250px;
+      height: fit-content;
+    }
   }
 `
