@@ -289,8 +289,9 @@ export default function Dubbing({ mode, timeStampArr }: DubbingProps) {
                     alt=""
                   />
                 </div>
+                {/* 녹음이 완료된 경우 className에 check 추가 */}
                 <div
-                  className="text-box"
+                  className="text-box check"
                   onClick={() => {
                     playVideoFrom(timeStamp.start, timeStamp.end)
                   }}

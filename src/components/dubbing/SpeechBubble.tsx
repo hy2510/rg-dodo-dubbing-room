@@ -42,6 +42,13 @@ export const StyledSpeechBubble = styled.div`
     }
   }
 
+  .check {
+    background-image: url('src/assets/images/common/ico-check-yellow.svg');
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+
   &.highlight {
     .character,
     .text-box {
